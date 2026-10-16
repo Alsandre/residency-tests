@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e5a8a" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#182230" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="შინაგანი მედიცინის რეზიდენტურის საგამოცდო ტესტები: კითხვა, ტესტი, შეცდომები, სტატისტიკა.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px) }
+body { margin: 0; font: 14px system-ui, sans-serif }
+img { max-width: 100% }
+[hidden] { display: none !important }
+</style>
+<title>რეზიდენტურის ტესტები</title>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: mobile-first. Fixed bottom tab bar, one column, big tap targets. Desktop just centres the column at 640px. */
+:root {
+  --bg: #f1f4f7; --surface: #ffffff; --fg: #142029; --muted: #5f6e7a; --line: #d3dce2; --accent: #1e5a8a; --accent-soft: #e3edf6;
+  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1;
+  --body: "Noto Sans Georgian", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --nav-h: 60px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark }
+
+:root[data-force="dark"] {
+  --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark }
+:root[data-force="light"] {
+  --bg: #f1f4f7; --surface: #ffffff; --fg: #142029; --muted: #5f6e7a; --line: #d3dce2; --accent: #1e5a8a; --accent-soft: #e3edf6;
+  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1; color-scheme: light }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent }
+html, body { height: 100% }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5 }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface) }
+button, select, input { font: inherit; color: inherit }
+button { cursor: pointer; touch-action: manipulation }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+[hidden] { display: none !important }
+
+.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5 }
+.top .in { max-width: 640px; margin: 0 auto; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: center; min-height: 54px }
+.top h1 { font-size: 1.05rem; font-weight: 700; margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.top .sub { display: block; font-size: .75rem; font-weight: 400; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.ib { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; min-width: 42px; height: 42px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: .9rem; font-weight: 500 }
+.ib.on { background: var(--accent); border-color: var(--accent); color: #fff }
+.ib svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round }
+
+.page { max-width: 640px; margin: 0 auto; padding-block: 14px calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 20px); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+
+nav.bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); z-index: 6; padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)) }
+nav.bar .in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--nav-h) }
+nav.bar button { border: 0; background: none; color: var(--muted); font-size: .72rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 }
+nav.bar button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+nav.bar button[aria-current="true"] { color: var(--accent); font-weight: 600 }
+nav.bar button b { position: absolute; margin-left: 34px; margin-top: -34px; background: var(--bad); color: #fff; font-size: .65rem; border-radius: 999px; padding: 0 5px; line-height: 1.5 }
+
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 18px; line-height: 1.3; font-weight: 500; min-height: 46px }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff }
+.btn.wide { width: 100%; font-size: 1.05rem; font-weight: 600; min-height: 52px }
+.btn.danger { color: var(--bad) }
+.btn:disabled { opacity: .5; cursor: default }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0 }
+.stack { display: flex; flex-direction: column; gap: 12px }
+h2 { font-size: 1rem; margin: 0 0 8px; font-weight: 700 }
+.hint { color: var(--muted); font-size: .88rem; margin: 0 }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface) }
+.seg button { border: 0; background: none; padding: 11px 6px; font-weight: 500; font-size: .95rem }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; font-size: .92rem; display: inline-flex; gap: 6px; align-items: baseline; min-height: 40px }
+.chip .n { color: var(--muted); font-size: .8rem }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff } .chip[aria-pressed="true"] .n { color: rgba(255,255,255,.8) }
+.search { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; min-height: 46px }
+.search input { flex: 1; min-width: 0; border: 0; background: none; outline: none; font-size: 1rem; padding: 10px 0 }
+.search svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; flex: none }
+.search button { border: 0; background: none; color: var(--muted); padding: 6px }
+
+/* question */
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0 }
+.qh { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; color: var(--muted); font-size: .78rem; margin-bottom: 8px }
+.qh .num { color: var(--accent); font-weight: 700 }
+.qt { font-weight: 600; font-size: 1.05rem; line-height: 1.45; margin: 0 0 12px; overflow-wrap: anywhere }
+.opts { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none }
+.opt { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); text-align: left; width: 100%; line-height: 1.4; overflow-wrap: anywhere; min-height: 48px; font-size: 1rem }
+.opt .let { flex: none; width: 1.8em; height: 1.8em; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: .82rem; color: var(--muted) }
+.opt.sel { border-color: var(--accent); background: var(--accent-soft) } .opt.sel .let { background: var(--accent); border-color: var(--accent); color: #fff }
+.opt.ok { background: var(--good-soft); border-color: var(--good) } .opt.ok .let { background: var(--good); border-color: var(--good); color: #fff }
+.opt.bad { background: var(--bad-soft); border-color: var(--bad) } .opt.bad .let { background: var(--bad); border-color: var(--bad); color: #fff }
+.opt:disabled { cursor: default }
+.reveal { margin-top: 10px; width: 100% }
+.verdict { font-weight: 700 } .verdict.good { color: var(--good) } .verdict.bad { color: var(--bad) }
+.fb { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; font-size: .95rem }
+.fb .m { color: var(--muted); font-size: .85rem }
+.sticky-next { position: sticky; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 10px); margin-top: 12px }
+.prog { display: flex; gap: 12px; align-items: center; font-size: .85rem; color: var(--muted); margin-bottom: 8px }
+.prog b { color: var(--fg) }
+.pbar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 12px }
+.pbar i { display: block; height: 100%; background: var(--accent); width: 0 }
+.grid { display: flex; flex-wrap: wrap; gap: 6px }
+.grid button { width: 40px; height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .85rem; padding: 0 }
+.grid button.done { background: var(--accent-soft); border-color: var(--accent) } .grid button.cur { outline: 2px solid var(--accent); outline-offset: 1px }
+.grid button.good { background: var(--good-soft); border-color: var(--good) } .grid button.wrong { background: var(--bad-soft); border-color: var(--bad) }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: .78rem; color: var(--muted) }
+.tile b { display: block; font-size: 1.5rem; color: var(--fg); font-weight: 700; line-height: 1.2 } .tile b.g { color: var(--good) } .tile b.r { color: var(--bad) }
+.ring { width: 120px; height: 120px; margin: 0 auto } .ring text { font-family: var(--body); fill: var(--fg) }
+.confirm { background: var(--warn-soft); border-radius: 12px; padding: 12px 14px; font-size: .95rem; display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.empty { color: var(--muted); text-align: center; padding: 30px 10px }
+.sync { font-size: .72rem; color: var(--muted) }
+.mist { display: flex; gap: 10px; align-items: center; justify-content: space-between }
+label.sw { display: flex; align-items: center; gap: 10px; min-height: 44px }
+label.sw input { width: 22px; height: 22px }
+select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); min-height: 46px; max-width: 100% }
+@media (prefers-reduced-motion: no-preference) { .opt { transition: background .12s, border-color .12s } .pbar i { transition: width .3s } }
+</style>
+
+<div class="top"><div class="in">
+  <h1 id="title">რეზიდენტურის ტესტები<span class="sub" id="subtitle">იტვირთება…</span></h1>
+  <button class="ib" id="themeBtn" type="button" aria-label="თემა" title="თემა: ავტო / მუქი / ნათელი"><svg viewBox="0 0 24 24" id="themeIco"></svg></button>
+  <button class="ib" id="filterBtn" type="button" aria-label="ფილტრი"><svg viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg><span id="filterCount"></span></button>
+</div></div>
+
+<main class="page" id="page"></main>
+
+<nav class="bar" aria-label="რეჟიმი"><div class="in">
+  <button type="button" id="nRead" aria-current="true"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/></svg>კითხვა</button>
+  <button type="button" id="nTest" aria-current="false"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>ტესტი</button>
+  <button type="button" id="nMist" aria-current="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>შეცდომები<b id="mistBadge" hidden></b></button>
+  <button type="button" id="nStats" aria-current="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>სტატისტიკა</button>
+</div></nav>
+
+<script>
+(function () {
+  const LET = 'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ';
+  const YEARS = [[1, 'I წელი'], [2, 'II წელი'], [3, 'III წელი'], [0, 'წლის გარეშე']];
+  const PAGE = 30;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a };
+
+  let BANK = [], byN = new Map(), topics = [];
+  // U: saved state. wrong[n] = times wrong, right[n] = times right, history = tests, prefs = filters and options
+  let U = { wrong: {}, right: {}, history: [], prefs: { years: [], topics: [], hide: false, count: 20, check: 'now', shuffle: true } };
+  let view = 'read', filterOpen = false, search = '', shown = PAGE, order = null, revealed = new Set(), picks = new Map(), test = null;
+
+  /* ---------- theme override (per viewer, kept in this browser) ---------- */
+  const ICO = { auto: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 3a9 9 0 0 1 0 18" fill="currentColor"/>', dark: '<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>', light: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>' };
+  function applyTheme(t) { const r = document.documentElement; if (t === 'auto') r.removeAttribute('data-force'); else r.setAttribute('data-force', t); $('themeIco').innerHTML = ICO[t] }
+  let theme = 'auto'; try { theme = localStorage.getItem('rt-theme') || 'auto' } catch (e) {} if (!ICO[theme]) theme = 'auto'; applyTheme(theme);
+  $('themeBtn').onclick = () => { theme = theme === 'auto' ? 'dark' : theme === 'dark' ? 'light' : 'auto'; try { localStorage.setItem('rt-theme', theme) } catch (e) {} applyTheme(theme) };
+
+  /* ---------- storage ---------- */
+  const store = { col: null, mode: 'local', dirty: new Set(), timer: null, chain: Promise.resolve() };
+  const DOCS = ['answers', 'history', 'prefs'];
+  const body = n => n === 'answers' ? { wrong: U.wrong, right: U.right } : n === 'history' ? { list: U.history.slice(-100) } : { ...U.prefs };
+  const apply = (n, b) => { if (!b) return; if (n === 'answers') { U.wrong = b.wrong || {}; U.right = b.right || {} } else if (n === 'history') U.history = b.list || []; else Object.assign(U.prefs, b) };
+  async function initStore() {
+    let db = null, user = null;
+    try { if (window.claude && claude.use) [db, user] = await Promise.all([claude.use('db'), claude.use('user')]) } catch (e) {}
+    const uid = user ? await user.id().catch(() => null) : null;
+    const loc = (() => { try { const v = localStorage.getItem('rt'); return v ? JSON.parse(v) : null } catch (e) { return null } })();
+    if (db && uid) {
+      store.col = db.collection('data/users/' + uid); store.mode = 'cloud';
+      const snaps = await Promise.all(DOCS.map(d => store.col.doc(d).get().catch(() => null)));
+      const any = snaps.some(s => s && s.exists);
+      snaps.forEach((s, i) => { if (s && s.exists) apply(DOCS[i], s.data()) });
+      if (!any && loc) { applyLocal(loc); DOCS.forEach(dirty) }
+    } else if (loc) applyLocal(loc);
+  }
+  function applyLocal(loc) { U.wrong = loc.wrong || {}; U.right = loc.right || {}; U.history = loc.history || []; Object.assign(U.prefs, loc.prefs || {}) }
+  function dirty(n) { store.dirty.add(n); clearTimeout(store.timer); store.timer = setTimeout(flush, 1200) }
+  function flush() {
+    clearTimeout(store.timer); if (!store.dirty.size) return;
+    const names = [...store.dirty]; store.dirty.clear();
+    try { localStorage.setItem('rt', JSON.stringify(U)) } catch (e) {}
+    if (store.mode !== 'cloud') return;
+    store.chain = store.chain.then(async () => { for (const n of names) { try { await store.col.doc(n).set(body(n)) } catch (e) { if (e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked')) { store.mode = 'local'; paintSub(); return } store.dirty.add(n); paintSub('შენახვა ვერ მოხერხდა, ვცდი ხელახლა'); clearTimeout(store.timer); store.timer = setTimeout(flush, 15000); return } } paintSub() });
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flush() }); window.addEventListener('pagehide', flush);
+
+  /* ---------- filter ---------- */
+  const P = () => U.prefs;
+  const inFilter = q => (!P().years.length || P().years.includes(q.y)) && (!P().topics.length || P().topics.includes(q.t));
+  const matchText = q => { const t = search.trim().toLowerCase(); return !t || q.q.toLowerCase().includes(t) || q.opts.some(o => o.toLowerCase().includes(t)) || String(q.n) === t };
+  function pool() { let p = BANK.filter(q => inFilter(q) && matchText(q)); if (order) { const pos = new Map(order.map((n, i) => [n, i])); p = p.slice().sort((a, b) => pos.get(a.n) - pos.get(b.n)) } return p }
+  function filterLabel() { const y = P().years.length ? P().years.map(v => YEARS.find(x => x[0] === v)[1]).join(', ') : 'ყველა წელი'; const t = P().topics.length ? (P().topics.length > 2 ? P().topics.length + ' თემა' : P().topics.join(', ')) : 'ყველა თემა'; return y + ' · ' + t }
+  function paintSub(msg) {
+    const n = BANK.filter(inFilter).length;
+    $('subtitle').textContent = msg || `${filterLabel()} · ${n} კითხვა · ${store.mode === 'cloud' ? 'ინახება ანგარიშზე' : 'ინახება ბრაუზერში'}`;
+    const fc = P().years.length + P().topics.length; $('filterCount').textContent = fc ? fc : ''; $('filterBtn').classList.toggle('on', fc > 0);
+    const m = Object.keys(U.wrong).filter(n => U.wrong[n] > (U.right[n] || 0) * 0 && byN.has(+n)).length; $('mistBadge').hidden = !m; $('mistBadge').textContent = m;
+  }
+
+  /* ---------- nav ---------- */
+  function go(v) { view = v; filterOpen = false; ['Read', 'Test', 'Mist', 'Stats'].forEach(x => $('n' + x).setAttribute('aria-current', v === x.toLowerCase())); render(); window.scrollTo({ top: 0 }) }
+  $('nRead').onclick = () => go('read'); $('nTest').onclick = () => go('test'); $('nMist').onclick = () => go('mist'); $('nStats').onclick = () => go('stats');
+  $('filterBtn').onclick = () => { filterOpen = !filterOpen; render(); window.scrollTo({ top: 0 }) };
+  function render() {
+    paintSub(); const pg = $('page'); pg.innerHTML = '';
+    if (filterOpen) return renderFilter(pg);
+    if (view === 'read') renderRead(pg); else if (view === 'test') renderTest(pg); else if (view === 'mist') renderMist(pg); else renderStats(pg);
+  }
+
+  /* ---------- FILTER ---------- */
+  function renderFilter(pg) {
+    const cnt = f => BANK.filter(f).length;
+    pg.innerHTML = `<div class="stack">
+      <div class="card"><h2>წელი</h2><div class="chips" id="yc">${YEARS.map(([v, n]) => `<button type="button" class="chip" data-y="${v}" aria-pressed="${P().years.includes(v)}"><span>${n}</span><span class="n">${cnt(q => q.y === v && (!P().topics.length || P().topics.includes(q.t)))}</span></button>`).join('')}</div></div>
+      <div class="card"><h2>თემა</h2><div class="chips" id="tc">${topics.map(t => `<button type="button" class="chip" data-t="${esc(t)}" aria-pressed="${P().topics.includes(t)}"><span>${esc(t)}</span><span class="n">${cnt(q => q.t === t && (!P().years.length || P().years.includes(q.y)))}</span></button>`).join('')}</div></div>
+      <p class="hint">არცერთი არჩეული = ყველა. ფილტრი მოქმედებს კითხვაზეც და ტესტზეც.</p>
+      <div class="row"><button class="btn primary" type="button" id="apply" style="flex:1">მზადაა · ${BANK.filter(inFilter).length} კითხვა</button><button class="btn" type="button" id="clr">გასუფთავება</button></div></div>`;
+    $('yc').onclick = e => { const b = e.target.closest('button'); if (!b) return; const v = +b.dataset.y; P().years = P().years.includes(v) ? P().years.filter(x => x !== v) : [...P().years, v]; dirty('prefs'); shown = PAGE; render() };
+    $('tc').onclick = e => { const b = e.target.closest('button'); if (!b) return; const t = b.dataset.t; P().topics = P().topics.includes(t) ? P().topics.filter(x => x !== t) : [...P().topics, t]; dirty('prefs'); shown = PAGE; render() };
+    $('clr').onclick = () => { P().years = []; P().topics = []; dirty('prefs'); shown = PAGE; render() };
+    $('apply').onclick = () => { filterOpen = false; render() };
+  }
+
+  /* ---------- READ ---------- */
+  function qCard(q, opts) {
+    // opts: {mode: 'read'|'hidden'|'testNow'|'testEnd'|'review', picked, done}
+    const el = document.createElement('article'); el.className = 'q'; el.id = 'q' + q.n;
+    const m = opts.mode, picked = m === 'hidden' ? picks.get(q.n) : opts.picked;
+    const show = m === 'read' || m === 'review' || (m === 'hidden' && revealed.has(q.n)) || (m === 'testNow' && picked !== undefined);
+    const clickable = (m === 'testNow' && picked === undefined) || m === 'testEnd' || (m === 'hidden' && !show);
+    const w = U.wrong[q.n] || 0, r = U.right[q.n] || 0;
+    let h = `<div class="qh"><span class="num">#${q.n}</span><span>${esc(q.t)}${q.y ? ' · ' + YEARS.find(x => x[0] === q.y)[1] : ''}</span>${(w || r) && m !== 'testEnd' ? `<span>${r ? '<span style="color:var(--good)">✓' + r + '</span>' : ''} ${w ? '<span style="color:var(--bad)">✗' + w + '</span>' : ''}</span>` : ''}</div><p class="qt">${esc(q.q)}</p><ul class="opts">`;
+    q.opts.forEach((o, i) => {
+      let cls = 'opt'; if (show && i === q.ans) cls += ' ok'; else if (show && picked === i) cls += ' bad'; else if (m === 'testEnd' && picked === i) cls += ' sel';
+      const tag = clickable ? 'button' : 'div';
+      h += `<li><${tag} class="${cls}" data-i="${i}"${clickable ? ' type="button"' : ''}><span class="let">${LET[i]}</span><span>${esc(o)}</span></${tag}></li>`;
+    });
+    h += '</ul>';
+    if (m === 'hidden' && !show) h += `<button class="btn reveal" type="button" data-act="reveal">პასუხის ჩვენება</button>`;
+    if (m === 'hidden' && show && picked !== undefined) h += `<div class="fb"><span class="verdict ${picked === q.ans ? 'good' : 'bad'}">${picked === q.ans ? 'სწორია' : 'არასწორია · სწორია ' + LET[q.ans]}</span></div>`;
+    if (m === 'testNow' && picked !== undefined) h += `<div class="fb"><span class="verdict ${picked === q.ans ? 'good' : 'bad'}">${picked === q.ans ? 'სწორია' : 'არასწორია · სწორია ' + LET[q.ans]}</span></div>`;
+    if (m === 'review') h += `<div class="fb">${picked === undefined ? '<span class="verdict" style="color:var(--muted)">უპასუხო</span>' : picked === q.ans ? '<span class="verdict good">სწორია</span>' : `<span class="verdict bad">თქვენი პასუხი ${LET[picked]} · სწორია ${LET[q.ans]}</span>`}</div>`;
+    el.innerHTML = h;
+    el.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.act === 'reveal') { revealed.add(q.n); el.replaceWith(qCard(q, opts)) }
+      else if (b.classList.contains('opt') && m === 'hidden') { const i = +b.dataset.i; picks.set(q.n, i); revealed.add(q.n); const s = i === q.ans ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers'); el.replaceWith(qCard(q, opts)) }
+      else if (b.classList.contains('opt') && opts.onPick) opts.onPick(+b.dataset.i);
+    });
+    return el;
+  }
+  function renderRead(pg) {
+    const items = pool();
+    pg.innerHTML = `<div class="stack">
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="s" type="search" placeholder="ძიება ან კითხვის ნომერი" value="${esc(search)}" autocomplete="off">${search ? '<button type="button" id="sx" aria-label="გასუფთავება">✕</button>' : ''}</div>
+      <div class="row" style="justify-content:space-between"><label class="sw"><input type="checkbox" id="hide" ${P().hide ? 'checked' : ''}> პასუხების დამალვა</label><button class="btn" type="button" id="shuf">${order ? 'თანმიმდევრობით' : 'არევა'}</button></div>
+      <p class="hint">${items.length} კითხვა${search ? ' ნაპოვნია' : ''}</p>
+      <div class="stack" id="list"></div><div id="more"></div></div>`;
+    const list = $('list');
+    if (!items.length) list.innerHTML = '<p class="empty">კითხვა ვერ მოიძებნა.</p>';
+    items.slice(0, shown).forEach(q => list.appendChild(qCard(q, { mode: P().hide ? 'hidden' : 'read' })));
+    if (items.length > shown) { $('more').innerHTML = `<button class="btn wide" type="button" id="moreBtn">კიდევ ${Math.min(PAGE, items.length - shown)} (დარჩა ${items.length - shown})</button>`; $('moreBtn').onclick = () => { shown += PAGE; renderRead(pg); window.scrollTo({ top: document.body.scrollHeight - window.innerHeight - 400 }) } }
+    const s = $('s'); s.oninput = () => { search = s.value; shown = PAGE; const pos = s.selectionStart; renderRead(pg); const s2 = $('s'); s2.focus(); s2.setSelectionRange(pos, pos) };
+    if ($('sx')) $('sx').onclick = () => { search = ''; shown = PAGE; renderRead(pg) };
+    $('hide').onchange = e => { P().hide = e.target.checked; dirty('prefs'); revealed.clear(); picks.clear(); renderRead(pg) };
+    $('shuf').onclick = () => { order = order ? null : shuffle(BANK.map(q => q.n)); shown = PAGE; renderRead(pg) };
+  }
+
+  /* ---------- TEST ---------- */
+  function renderTest(pg) {
+    if (test && !test.done) return renderTestLive(pg);
+    if (test && test.done) return renderTestResult(pg);
+    const p = BANK.filter(inFilter);
+    const counts = [10, 20, 30, 50, 100].filter(n => n < p.length);
+    pg.innerHTML = `<div class="stack">
+      <div class="card"><h2>ახალი ტესტი</h2><p class="hint" style="margin-bottom:10px">${esc(filterLabel())} · ${p.length} კითხვა ფილტრში</p>
+        <div class="stack">
+          <div><p class="hint" style="margin-bottom:6px">რამდენი კითხვა</p><div class="seg" id="cnt">${counts.map(n => `<button type="button" data-v="${n}" aria-pressed="${P().count === n}">${n}</button>`).join('')}<button type="button" data-v="all" aria-pressed="${P().count === 'all'}">ყველა</button></div></div>
+          <div><p class="hint" style="margin-bottom:6px">შემოწმება</p><div class="seg" id="chk"><button type="button" data-v="now" aria-pressed="${P().check === 'now'}">ყოველ პასუხზე</button><button type="button" data-v="end" aria-pressed="${P().check === 'end'}">ბოლოს, როგორც გამოცდაზე</button></div></div>
+          <label class="sw"><input type="checkbox" id="shf" ${P().shuffle ? 'checked' : ''}> შემთხვევითი თანმიმდევრობა</label>
+          <button class="btn primary wide" type="button" id="go" ${p.length ? '' : 'disabled'}>დაწყება</button>
+        </div></div>
+      ${U.history.length ? `<div class="card"><h2>ბოლო ტესტები</h2>${U.history.slice(-6).reverse().map(h => `<div class="mist" style="padding:8px 0;border-top:1px solid var(--line)"><span><b style="color:${h.score >= 70 ? 'var(--good)' : 'var(--bad)'}">${h.score}%</b> · ${h.n} კითხვა</span><span class="hint">${new Date(h.at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'short' })} · ${esc(h.f)}</span></div>`).join('')}</div>` : ''}</div>`;
+    $('cnt').onclick = e => { const b = e.target.closest('button'); if (!b) return; P().count = b.dataset.v === 'all' ? 'all' : +b.dataset.v; dirty('prefs'); renderTest(pg) };
+    $('chk').onclick = e => { const b = e.target.closest('button'); if (!b) return; P().check = b.dataset.v; dirty('prefs'); renderTest(pg) };
+    $('shf').onchange = e => { P().shuffle = e.target.checked; dirty('prefs') };
+    $('go').onclick = () => startTest(p);
+  }
+  function startTest(p, label) {
+    let ids = p.map(q => q.n); if (P().shuffle) shuffle(ids); if (P().count !== 'all') ids = ids.slice(0, P().count);
+    if (!ids.length) return;
+    test = { ids, picks: {}, cur: 0, done: false, check: P().check, f: label || filterLabel(), confirm: false, onlyWrong: true };
+    view = 'test'; $('nTest').click();
+  }
+  function renderTestLive(pg) {
+    const total = test.ids.length, answered = Object.keys(test.picks).length, q = byN.get(test.ids[test.cur]), picked = test.picks[q.n];
+    const now = test.check === 'now';
+    pg.innerHTML = `<div class="prog"><span>კითხვა <b>${test.cur + 1}</b> / ${total}</span>${now ? `<span>სწორი <b style="color:var(--good)">${test.ids.filter(n => test.picks[n] === byN.get(n).ans).length}</b></span>` : `<span>პასუხი <b>${answered}</b></span>`}<button class="btn danger" type="button" id="abort" style="margin-left:auto;min-height:36px;padding:6px 12px">გაუქმება</button></div>
+      <div class="pbar"><i style="width:${answered / total * 100}%"></i></div><div id="qbox"></div>
+      <div class="row sticky-next" id="nav"></div>${test.confirm ? `<div class="confirm" style="margin-top:12px"><span>${total - answered ? (total - answered) + ' კითხვა უპასუხოა და არასწორად ჩაითვლება. ' : ''}დავასრულოთ?</span><button class="btn primary" type="button" id="yes">დიახ</button><button class="btn" type="button" id="no">არა</button></div>` : ''}
+      ${!now ? `<div class="grid" style="margin-top:14px" id="grid">${test.ids.map((n, i) => `<button type="button" data-i="${i}" class="${test.picks[n] !== undefined ? 'done' : ''}${i === test.cur ? ' cur' : ''}">${i + 1}</button>`).join('')}</div>` : ''}`;
+    $('qbox').appendChild(qCard(q, { mode: now ? 'testNow' : 'testEnd', picked, onPick: i => {
+      test.picks[q.n] = i;
+      if (now) { const ok = i === q.ans; const s = ok ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers') }
+      if (!now && test.cur < total - 1) test.cur++;
+      renderTestLive(pg); if (!now) window.scrollTo({ top: 0 });
+    } }));
+    const last = test.cur === total - 1;
+    $('nav').innerHTML = now
+      ? (picked !== undefined ? `<button class="btn primary wide" type="button" id="next">${last ? 'შედეგი' : 'შემდეგი'}</button>` : '')
+      : `<button class="btn" type="button" id="prev" ${test.cur === 0 ? 'disabled' : ''} style="flex:1">← წინა</button>${last ? `<button class="btn primary" type="button" id="fin" style="flex:2">დასრულება</button>` : `<button class="btn" type="button" id="next" style="flex:1">შემდეგი →</button><button class="btn primary" type="button" id="fin">დასრულება</button>`}`;
+    if ($('next')) $('next').onclick = () => { if (now && last) return finishTest(); test.cur++; renderTestLive(pg); window.scrollTo({ top: 0 }) };
+    if ($('prev')) $('prev').onclick = () => { test.cur--; renderTestLive(pg); window.scrollTo({ top: 0 }) };
+    if ($('fin')) $('fin').onclick = () => { test.confirm = true; renderTestLive(pg) };
+    if ($('yes')) { $('yes').onclick = finishTest; $('no').onclick = () => { test.confirm = false; renderTestLive(pg) } }
+    if ($('grid')) $('grid').onclick = e => { const b = e.target.closest('button'); if (b) { test.cur = +b.dataset.i; renderTestLive(pg); window.scrollTo({ top: 0 }) } };
+    $('abort').onclick = () => { test = null; render() };
+  }
+  function finishTest() {
+    const qs = test.ids.map(n => byN.get(n)); let ok = 0;
+    qs.forEach(q => { const good = test.picks[q.n] === q.ans; if (good) ok++; if (test.check === 'end') { const s = good ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1 } });
+    if (test.check === 'end') dirty('answers');
+    test.done = true; test.score = Math.round(ok / qs.length * 100); test.confirm = false;
+    U.history.push({ at: Date.now(), n: qs.length, score: test.score, f: test.f }); dirty('history'); flush();
+    render(); window.scrollTo({ top: 0 });
+  }
+  function renderTestResult(pg) {
+    const qs = test.ids.map(n => byN.get(n)); const wrong = qs.filter(q => test.picks[q.n] !== q.ans);
+    const r = 48, C = 2 * Math.PI * r;
+    pg.innerHTML = `<div class="stack"><div class="card">
+      <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="შედეგი ${test.score}%"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${test.score >= 70 ? 'var(--good)' : 'var(--bad)'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * test.score / 100} ${C}" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" font-size="26" font-weight="700">${test.score}%</text></svg>
+      <div class="tiles" style="margin-top:12px"><div class="tile">სწორი<b class="g">${qs.length - wrong.length}</b></div><div class="tile">არასწორი<b class="r">${wrong.length}</b></div><div class="tile">სულ<b>${qs.length}</b></div></div>
+      <div class="row" style="margin-top:12px">${wrong.length ? `<button class="btn primary" type="button" id="retry" style="flex:1">შეცდომების გამეორება</button>` : ''}<button class="btn" type="button" id="newt" style="flex:1">ახალი ტესტი</button></div></div>
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">გადახედვა</h2><button class="btn" type="button" id="tw" style="min-height:38px;padding:6px 12px">${test.onlyWrong ? 'ყველა' : 'მხოლოდ შეცდომები'}</button></div>
+      <div class="stack" id="rev"></div></div>`;
+    const rev = $('rev'); const list = qs.filter(q => !test.onlyWrong || test.picks[q.n] !== q.ans);
+    if (!list.length) rev.innerHTML = '<p class="empty">შეცდომა არ არის.</p>';
+    list.forEach(q => rev.appendChild(qCard(q, { mode: 'review', picked: test.picks[q.n] })));
+    $('tw').onclick = () => { test.onlyWrong = !test.onlyWrong; renderTestResult(pg) };
+    $('newt').onclick = () => { test = null; render() };
+    if ($('retry')) $('retry').onclick = () => { const keep = P().count; P().count = 'all'; startTest(wrong, 'შეცდომები'); P().count = keep };
+  }
+
+  /* ---------- MISTAKES ---------- */
+  function mistakes() { return BANK.filter(q => (U.wrong[q.n] || 0) > 0).sort((a, b) => (U.wrong[b.n] - (U.right[b.n] || 0)) - (U.wrong[a.n] - (U.right[a.n] || 0))) }
+  function renderMist(pg) {
+    const all = mistakes(); const items = all.filter(inFilter);
+    pg.innerHTML = `<div class="stack"><p class="hint">კითხვები, რომლებზეც ოდესმე შეცდით. ✓ და ✗ სწორი და არასწორი პასუხების რაოდენობაა. სია იწმინდება მაშინ, როცა თქვენ წაშლით.</p>
+      ${items.length ? `<div class="row"><button class="btn primary" type="button" id="mt" style="flex:1">ტესტი შეცდომებზე · ${items.length}</button><button class="btn" type="button" id="mc">სიის გასუფთავება</button></div><div id="cbox"></div>` : ''}
+      <div class="stack" id="ml">${items.length ? '' : '<p class="empty">ჯერ შეცდომა არ არის.</p>'}</div></div>`;
+    const ml = $('ml'); items.slice(0, 50).forEach(q => ml.appendChild(qCard(q, { mode: P().hide ? 'hidden' : 'read' })));
+    if (items.length > 50) ml.insertAdjacentHTML('beforeend', `<p class="hint">ნაჩვენებია 50 / ${items.length}. ტესტი ყველას მოიცავს.</p>`);
+    if ($('mt')) $('mt').onclick = () => { const keep = P().count; P().count = 'all'; startTest(items, 'შეცდომები'); P().count = keep };
+    if ($('mc')) $('mc').onclick = () => { $('cbox').innerHTML = `<div class="confirm">წაიშლება შეცდომების ისტორია ამ ფილტრში (${items.length}). <button class="btn danger" type="button" id="yes">წაშლა</button><button class="btn" type="button" id="no">არა</button></div>`; $('yes').onclick = () => { items.forEach(q => { delete U.wrong[q.n] }); dirty('answers'); render() }; $('no').onclick = () => { $('cbox').innerHTML = '' } };
+  }
+
+  /* ---------- STATS ---------- */
+  function renderStats(pg) {
+    const seen = BANK.filter(q => U.right[q.n] || U.wrong[q.n]); const okN = seen.filter(q => (U.right[q.n] || 0) > (U.wrong[q.n] || 0)).length;
+    const tot = Object.values(U.right).reduce((a, b) => a + b, 0), totW = Object.values(U.wrong).reduce((a, b) => a + b, 0);
+    const byT = {}; BANK.forEach(q => { const r = byT[q.t] || (byT[q.t] = { n: 0, seen: 0, ok: 0, w: 0 }); r.n++; const rr = U.right[q.n] || 0, ww = U.wrong[q.n] || 0; if (rr || ww) r.seen++; r.ok += rr; r.w += ww });
+    const rows = Object.entries(byT).sort((a, b) => b[1].n - a[1].n);
+    pg.innerHTML = `<div class="stack">
+      <div class="tiles"><div class="tile">ნანახი<b>${seen.length}</b>${BANK.length}-დან</div><div class="tile">ბოლოს სწორი<b class="g">${okN}</b></div><div class="tile">სულ პასუხი<b>${tot + totW}</b>სიზუსტე ${tot + totW ? Math.round(tot / (tot + totW) * 100) : 0}%</div><div class="tile">ტესტი<b>${U.history.length}</b>${U.history.length ? 'საუკეთესო ' + Math.max(...U.history.map(h => h.score)) + '%' : ''}</div></div>
+      <div class="card"><h2>თემების მიხედვით</h2>${rows.map(([t, r]) => `<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="mist"><span style="font-size:.92rem">${esc(t)}</span><span class="hint">${r.seen}/${r.n} ნანახი${r.ok + r.w ? ' · ' + Math.round(r.ok / (r.ok + r.w) * 100) + '%' : ''}</span></div><div class="pbar" style="margin:6px 0 0"><i style="width:${r.seen / r.n * 100}%;background:${r.ok + r.w && r.ok / (r.ok + r.w) < .7 ? 'var(--bad)' : 'var(--accent)'}"></i></div></div>`).join('')}</div>
+      <div class="card"><h2>მონაცემები</h2><p class="hint" style="margin-bottom:10px">${store.mode === 'cloud' ? 'პროგრესი ინახება თქვენს ანგარიშზე და ჩანს ყველა მოწყობილობაზე.' : 'პროგრესი ინახება მხოლოდ ამ ბრაუზერში.'}</p><button class="btn danger" type="button" id="reset">მთელი პროგრესის წაშლა</button><div id="rbox"></div></div></div>`;
+    $('reset').onclick = () => { $('rbox').innerHTML = `<div class="confirm" style="margin-top:10px">წაიშლება ყველა პასუხი და ტესტი. დარწმუნებული ხართ? <button class="btn danger" type="button" id="yes">დიახ</button><button class="btn" type="button" id="no">არა</button></div>`; $('yes').onclick = () => { U.wrong = {}; U.right = {}; U.history = []; DOCS.forEach(dirty); flush(); render() }; $('no').onclick = () => { $('rbox').innerHTML = '' } };
+  }
+
+  /* ---------- keyboard (desktop) ---------- */
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || !test || test.done || view !== 'test') return;
+    const q = byN.get(test.ids[test.cur]); const k = parseInt(e.key, 10);
+    if (k >= 1 && k <= q.opts.length) { const b = document.querySelector(`#qbox .opt[data-i="${k - 1}"]`); if (b && b.tagName === 'BUTTON') b.click() }
+    else if (e.key === 'Enter' || e.key === 'ArrowRight') { const n = $('next'); if (n) n.click() }
+    else if (e.key === 'ArrowLeft') { const p = $('prev'); if (p && !p.disabled) p.click() }
+  });
+
+  /* ---------- boot ---------- */
+  fetch('bank.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json() }).then(async data => {
+    BANK = data; BANK.forEach(q => byN.set(q.n, q));
+    const tc = {}; BANK.forEach(q => tc[q.t] = (tc[q.t] || 0) + 1); topics = Object.keys(tc).sort((a, b) => tc[b] - tc[a]);
+    await initStore(); render();
+  }).catch(err => { $('page').innerHTML = '<p class="empty">კითხვების ჩატვირთვა ვერ მოხერხდა (' + esc(err.message) + '). განაახლეთ გვერდი.</p>' });
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}) });
+}
+</script>
+</body>
+</html>

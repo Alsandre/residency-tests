@@ -1,0 +1,16 @@
+{
+  "name": "რეზიდენტურის ტესტები",
+  "short_name": "ტესტები",
+  "description": "შინაგანი მედიცინის რეზიდენტურის საგამოცდო ტესტები",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f4f7",
+  "theme_color": "#1e5a8a",
+  "lang": "ka",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
