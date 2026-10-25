@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#182230" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="შინაგანი მედიცინის რეზიდენტურის საგამოცდო ტესტები: კითხვა, ტესტი, შეცდომები, სტატისტიკა.">
+<meta name="description" content="შინაგანი მედიცინის რეზიდენტურის საგამოცდო ტესტები: კითხვა, ტესტი, ჯგუფები, ჩანაწერები, შეცდომები, სტატისტიკა.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -17,6 +17,7 @@ body { margin: 0; font: 14px system-ui, sans-serif }
 img { max-width: 100% }
 [hidden] { display: none !important }
 </style>
+<script>window.__NO_AI = true;</script>
 <title>რეზიდენტურის ტესტები</title>
 </head>
 <body>
@@ -25,52 +26,68 @@ img { max-width: 100% }
 /* Layout: mobile-first. Fixed bottom tab bar, one column, big tap targets. Desktop just centres the column at 640px. */
 :root {
   --bg: #f1f4f7; --surface: #ffffff; --fg: #142029; --muted: #5f6e7a; --line: #d3dce2; --accent: #1e5a8a; --accent-soft: #e3edf6;
-  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1;
+  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1; --note-soft: #fff8dc;
   --body: "Noto Sans Georgian", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
-  --nav-h: 60px;
+  --nav-h: 64px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
-  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark } }
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; --note-soft: #2d2a16; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
-  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark }
-
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; --note-soft: #2d2a16; color-scheme: dark }
 :root[data-force="dark"] {
   --bg: #0f161e; --surface: #182230; --fg: #e6ecf2; --muted: #93a3b4; --line: #2b3949; --accent: #7cb8e8; --accent-soft: #1d3247;
-  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; color-scheme: dark }
+  --good: #52c58a; --good-soft: #173426; --bad: #e57b7b; --bad-soft: #3d1f1f; --warn-soft: #3a3118; --note-soft: #2d2a16; color-scheme: dark }
 :root[data-force="light"] {
   --bg: #f1f4f7; --surface: #ffffff; --fg: #142029; --muted: #5f6e7a; --line: #d3dce2; --accent: #1e5a8a; --accent-soft: #e3edf6;
-  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1; color-scheme: light }
+  --good: #1b7a4b; --good-soft: #e2f3e9; --bad: #b23b3b; --bad-soft: #f9e5e5; --warn-soft: #fff2d1; --note-soft: #fff8dc; color-scheme: light }
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent }
-html, body { height: 100% }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5 }
+html { height: 100% }
+body { min-height: 100%; margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface) }
-button, select, input { font: inherit; color: inherit }
+button, select, input, textarea { font: inherit; color: inherit }
 button { cursor: pointer; touch-action: manipulation }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 [hidden] { display: none !important }
 
 .top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5 }
-.top .in { max-width: 640px; margin: 0 auto; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: center; min-height: 54px }
+.top .in { max-width: 640px; margin: 0 auto; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 8px; align-items: center; min-height: 54px }
 .top h1 { font-size: 1.05rem; font-weight: 700; margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
 .top .sub { display: block; font-size: .75rem; font-weight: 400; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
-.ib { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; min-width: 42px; height: 42px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: .9rem; font-weight: 500 }
+.ib { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; min-width: 42px; height: 42px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: .9rem; font-weight: 600 }
 .ib.on { background: var(--accent); border-color: var(--accent); color: #fff }
 .ib svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round }
 
 .page { max-width: 640px; margin: 0 auto; padding-block: 14px calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 20px); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
 
 nav.bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); z-index: 6; padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)) }
-nav.bar .in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--nav-h) }
-nav.bar button { border: 0; background: none; color: var(--muted); font-size: .72rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 }
-nav.bar button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+nav.bar .in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); height: var(--nav-h) }
+nav.bar button { border: 0; background: none; color: var(--muted); font-size: .75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0; position: relative }
+nav.bar button i { display: grid; place-items: center; width: 52px; height: 30px; border-radius: 15px }
+nav.bar button svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round }
 nav.bar button[aria-current="true"] { color: var(--accent); font-weight: 600 }
-nav.bar button b { position: absolute; margin-left: 34px; margin-top: -34px; background: var(--bad); color: #fff; font-size: .65rem; border-radius: 999px; padding: 0 5px; line-height: 1.5 }
+nav.bar button[aria-current="true"] i { background: var(--accent-soft) }
+nav.bar button b { position: absolute; top: 4px; left: calc(50% + 8px); background: var(--bad); color: #fff; font-size: .62rem; border-radius: 999px; padding: 0 5px; line-height: 1.5 }
+
+/* read toolbar: pinned search row, save-as-group beside it, toggle buttons */
+.sticky { position: sticky; z-index: 4; background: var(--bg); padding: 14px 16px 10px; margin: -14px -16px 0; display: flex; gap: 8px; align-items: center }
+.sticky.stuck { box-shadow: 0 6px 14px -8px rgba(0,0,0,.45); border-bottom: 1px solid var(--line) }
+.sticky .search { flex: 1; min-width: 0 }
+.search .cnt { color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; flex: none }
+.ib.save { width: 46px; height: 46px; border-radius: 12px; flex: none }
+.ib.save:disabled { opacity: .35; cursor: default }
+.ib.save svg { width: 22px; height: 22px }
+.tg { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; font-size: .9rem; font-weight: 500; color: var(--fg); padding: 0 10px; white-space: nowrap }
+.tg.hide { flex: 1.6 }
+.tg svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none }
+.tg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff }
 
 .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 18px; line-height: 1.3; font-weight: 500; min-height: 46px }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff }
 .btn.wide { width: 100%; font-size: 1.05rem; font-weight: 600; min-height: 52px }
+.btn.sm { min-height: 38px; padding: 6px 12px; font-size: .9rem }
 .btn.danger { color: var(--bad) }
 .btn:disabled { opacity: .5; cursor: default }
 .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
@@ -80,6 +97,7 @@ h2 { font-size: 1rem; margin: 0 0 8px; font-weight: 700 }
 .hint { color: var(--muted); font-size: .88rem; margin: 0 }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface) }
 .seg button { border: 0; background: none; padding: 11px 6px; font-weight: 500; font-size: .95rem }
+.seg.sm button { padding: 8px 6px; font-size: .85rem }
 .seg button[aria-pressed="true"] { background: var(--accent); color: #fff }
 .chips { display: flex; flex-wrap: wrap; gap: 8px }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; font-size: .92rem; display: inline-flex; gap: 6px; align-items: baseline; min-height: 40px }
@@ -89,6 +107,8 @@ h2 { font-size: 1rem; margin: 0 0 8px; font-weight: 700 }
 .search input { flex: 1; min-width: 0; border: 0; background: none; outline: none; font-size: 1rem; padding: 10px 0 }
 .search svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; flex: none }
 .search button { border: 0; background: none; color: var(--muted); padding: 6px }
+input.txt, textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 10px 12px; font-size: 1rem; min-height: 46px }
+textarea { resize: vertical; min-height: 80px; line-height: 1.45 }
 
 /* question */
 .q { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0 }
@@ -102,10 +122,18 @@ h2 { font-size: 1rem; margin: 0 0 8px; font-weight: 700 }
 .opt.ok { background: var(--good-soft); border-color: var(--good) } .opt.ok .let { background: var(--good); border-color: var(--good); color: #fff }
 .opt.bad { background: var(--bad-soft); border-color: var(--bad) } .opt.bad .let { background: var(--bad); border-color: var(--bad); color: #fff }
 .opt:disabled { cursor: default }
+mark { background: var(--warn-soft); color: inherit; border-radius: 3px; padding: 0 2px }
 .reveal { margin-top: 10px; width: 100% }
 .verdict { font-weight: 700 } .verdict.good { color: var(--good) } .verdict.bad { color: var(--bad) }
 .fb { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; font-size: .95rem }
-.fb .m { color: var(--muted); font-size: .85rem }
+.tools { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap }
+.tools .ib { min-height: 40px; height: auto; font-size: .85rem; border-radius: 10px; padding: 6px 12px; font-weight: 500 }
+.tools .ib.has { border-color: var(--accent); color: var(--accent) }
+.note { margin-top: 10px; background: var(--note-soft); border-radius: 10px; padding: 10px 12px; font-size: .95rem; white-space: pre-wrap; overflow-wrap: anywhere }
+.panel { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 12px }
+.panel .g { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 2px 0 }
+.panel .g input[type=checkbox] { width: 22px; height: 22px; flex: none }
+.panel .g span { flex: 1; min-width: 0 } .panel .g small { color: var(--muted) }
 .sticky-next { position: sticky; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 10px); margin-top: 12px }
 .prog { display: flex; gap: 12px; align-items: center; font-size: .85rem; color: var(--muted); margin-bottom: 8px }
 .prog b { color: var(--fg) }
@@ -114,165 +142,525 @@ h2 { font-size: 1rem; margin: 0 0 8px; font-weight: 700 }
 .grid { display: flex; flex-wrap: wrap; gap: 6px }
 .grid button { width: 40px; height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .85rem; padding: 0 }
 .grid button.done { background: var(--accent-soft); border-color: var(--accent) } .grid button.cur { outline: 2px solid var(--accent); outline-offset: 1px }
-.grid button.good { background: var(--good-soft); border-color: var(--good) } .grid button.wrong { background: var(--bad-soft); border-color: var(--bad) }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px }
 .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: .78rem; color: var(--muted) }
 .tile b { display: block; font-size: 1.5rem; color: var(--fg); font-weight: 700; line-height: 1.2 } .tile b.g { color: var(--good) } .tile b.r { color: var(--bad) }
 .ring { width: 120px; height: 120px; margin: 0 auto } .ring text { font-family: var(--body); fill: var(--fg) }
 .confirm { background: var(--warn-soft); border-radius: 12px; padding: 12px 14px; font-size: .95rem; display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
 .empty { color: var(--muted); text-align: center; padding: 30px 10px }
-.sync { font-size: .72rem; color: var(--muted) }
 .mist { display: flex; gap: 10px; align-items: center; justify-content: space-between }
 label.sw { display: flex; align-items: center; gap: 10px; min-height: 44px }
 label.sw input { width: 22px; height: 22px }
-select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); min-height: 46px; max-width: 100% }
-@media (prefers-reduced-motion: no-preference) { .opt { transition: background .12s, border-color .12s } .pbar i { transition: width .3s } }
+.glist button.grp { display: flex; width: 100%; text-align: left; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; min-height: 60px }
+.glist .grp .nm { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.glist .grp .ct { color: var(--muted); font-size: .85rem; white-space: nowrap }
+.glist .grp svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none }
+.aiout { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .95rem; line-height: 1.5; margin-top: 10px; padding: 10px 12px; background: var(--accent-soft); border-radius: 10px }
+.aiout:empty { display: none }
+.md { white-space: normal }
+.md p { margin: 0 0 8px } .md p:last-child, .md ul:last-child, .md ol:last-child { margin-bottom: 0 }
+.md ul, .md ol { margin: 0 0 8px; padding-left: 22px } .md li { margin: 2px 0 }
+.md h4 { margin: 10px 0 4px; font-size: 1rem; font-weight: 700 } .md h4:first-child { margin-top: 0 }
+.md code { font-size: .9em; background: var(--bg); padding: 0 4px; border-radius: 4px }
+.md strong { font-weight: 700 }
+.aiq { font-size: .85rem; color: var(--muted); margin: 10px 0 0 }
+.chat { display: flex; flex-direction: column; gap: 10px }
+.msg { max-width: 92%; padding: 10px 14px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .97rem; line-height: 1.5 }
+.msg.me { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px }
+.msg.ai { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px }
+.msg.sys { align-self: center; font-size: .82rem; color: var(--muted); background: none; padding: 0 }
+.composer { position: sticky; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 8px); display: flex; gap: 8px; align-items: flex-end; background: var(--bg); padding-top: 8px }
+.composer textarea { min-height: 46px; max-height: 160px; flex: 1 }
+.toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 14px); transform: translate(-50%, 8px); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: .92rem; opacity: 0; pointer-events: none; z-index: 7; max-width: calc(100vw - 32px); text-align: center }
+.toast.show { opacity: 1; transform: translate(-50%, 0) }
+/* motion: every piece confirms a tap, runs under 250ms, and is off under reduce-motion */
+@media (prefers-reduced-motion: no-preference) {
+  .opt { transition: background .15s, border-color .15s, transform .18s cubic-bezier(.2,.8,.2,1) }
+  .opt .let { transition: background .15s, border-color .15s, color .15s }
+  .opt.pop { animation: pop .22s cubic-bezier(.2,.8,.2,1) }
+  .opt.nudge { animation: nudge .26s ease-out }
+  .verdict.rise { animation: rise .18s ease-out }
+  .btn:active:not(:disabled), .ib:active:not(:disabled), .tg:active, .chip:active, .opt.pick:active { transform: scale(.97); transition-duration: .06s }
+  nav.bar button i { transition: background .18s }
+  .toast { transition: opacity .18s, transform .18s }
+  .page.swap { animation: fade .14s ease-out }
+  .ring .arc { transition: stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1) }
+  .pbar i { transition: width .3s }
+  @keyframes pop { 0% { transform: scale(1) } 40% { transform: scale(1.025) } 100% { transform: scale(1) } }
+  @keyframes nudge { 0%, 100% { transform: translateX(0) } 30% { transform: translateX(-3px) } 60% { transform: translateX(3px) } }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+  @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+}
 </style>
 
 <div class="top"><div class="in">
-  <h1 id="title">რეზიდენტურის ტესტები<span class="sub" id="subtitle">იტვირთება…</span></h1>
-  <button class="ib" id="themeBtn" type="button" aria-label="თემა" title="თემა: ავტო / მუქი / ნათელი"><svg viewBox="0 0 24 24" id="themeIco"></svg></button>
-  <button class="ib" id="filterBtn" type="button" aria-label="ფილტრი"><svg viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg><span id="filterCount"></span></button>
+  <h1 id="title"><span id="titleText">რეზიდენტურის ტესტები</span><span class="sub" id="subtitle">…</span></h1>
+  <button class="ib" id="langBtn" type="button" aria-label="Language">EN</button>
+  <button class="ib" id="themeBtn" type="button" aria-label="Theme"><svg viewBox="0 0 24 24" id="themeIco"></svg></button>
+  <button class="ib" id="filterBtn" type="button" aria-label="Filter"><svg viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg><span id="filterCount"></span></button>
 </div></div>
 
 <main class="page" id="page"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<nav class="bar" aria-label="რეჟიმი"><div class="in">
-  <button type="button" id="nRead" aria-current="true"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/></svg>კითხვა</button>
-  <button type="button" id="nTest" aria-current="false"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>ტესტი</button>
-  <button type="button" id="nMist" aria-current="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>შეცდომები<b id="mistBadge" hidden></b></button>
-  <button type="button" id="nStats" aria-current="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>სტატისტიკა</button>
+<nav class="bar"><div class="in">
+  <button type="button" id="nRead" aria-current="true"><i><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/></svg></i><span></span></button>
+  <button type="button" id="nTest" aria-current="false"><i><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></i><span></span></button>
+  <button type="button" id="nGroups" aria-current="false"><i><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></i><span></span></button>
+  <button type="button" id="nMist" aria-current="false"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></i><span></span><b id="mistBadge" hidden></b></button>
+  <button type="button" id="nStats" aria-current="false"><i><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></i><span></span></button>
 </div></nav>
 
 <script>
 (function () {
+  /* ---------- interface strings (questions themselves are never translated) ---------- */
+  const STR = {
+    ka: {
+      title: 'რეზიდენტურის ტესტები', loading: 'იტვირთება…', theme: 'თემა: ავტო / მუქი / ნათელი', filter: 'ფილტრი',
+      nav: ['კითხვა', 'ტესტი', 'ჯგუფები', 'შეცდომები', 'სტატისტიკა'],
+      years: { 1: 'I წელი', 2: 'II წელი', 3: 'III წელი', 0: 'წლის გარეშე' }, allYears: 'ყველა წელი', allTopics: 'ყველა თემა', nTopics: n => n + ' თემა',
+      q: n => n + ' კითხვა', savedCloud: 'ინახება ანგარიშზე', savedLocal: 'ინახება ბრაუზერში', saveErr: 'შენახვა ვერ მოხერხდა, ვცდი ხელახლა',
+      year: 'წელი', topic: 'თემა', filterHint: 'არცერთი არჩეული = ყველა. ფილტრი მოქმედებს კითხვაზეც და ტესტზეც.', done: 'მზადაა', clear: 'გასუფთავება',
+      showAnswer: 'პასუხის ჩვენება', correct: 'სწორია', wrongIs: l => 'არასწორია · სწორია ' + l, unanswered: 'უპასუხო', yoursIs: (a, b) => 'თქვენი პასუხი ' + a + ' · სწორია ' + b,
+      note: 'ჩანაწერი', group: 'ჯგუფი', removeFromGroup: 'ამოღება ჯგუფიდან', notePh: 'თქვენი ჩანაწერი ამ კითხვაზე…', del: 'წაშლა', autosave: 'ინახება ავტომატურად',
+      whichGroup: 'რომელ ჯგუფში?', alsoBySearch: 'ეს კითხვა ძიებითაც ხვდება', noGroups: 'ჯგუფი ჯერ არ არის.', newGroupName: 'ახალი ჯგუფის სახელი', create: 'შექმნა', close: 'დახურვა',
+      searchPh: 'სიტყვები ან კითხვის ნომერი', scope: ['ყველგან', 'კითხვაში', 'პასუხებში'], hideAnswers: 'პასუხების დამალვა', hide: 'დამალვა', shuffle: 'არევა', inOrder: 'თანმიმდევრობით',
+      found: n => n + ' კითხვა ნაპოვნია', saveSearch: 'ძიების შენახვა ჯგუფად', notFound: 'კითხვა ვერ მოიძებნა.', more: (n, left) => 'კიდევ ' + n + ' (დარჩა ' + left + ')', moreN: n => 'კიდევ ' + n,
+      groupFromSearch: 'ჯგუფი ძიებიდან', groupFromSearchHint: (where, w, n) => 'ჯგუფში ავტომატურად მოხვდება ყველა კითხვა, სადაც ' + where + ' არის: ' + w + ' (' + n + ' კითხვა ფილტრის გარეშე). მერე სათითაოდაც შეგიძლიათ დაამატოთ.',
+      whereQ: 'კითხვის ტექსტში', whereA: 'პასუხებში', whereAll: 'კითხვაში ან პასუხებში', no: 'არა', yes: 'დიახ',
+      newGroup: 'ახალი ჯგუფი', groupNamePh: 'სახელი, მაგ. გულის უკმარისობა', groupsHint: 'კითხვები ემატება სათითაოდ ბარათის „ჯგუფი“ ღილაკით, ან „კითხვა“ გვერდზე ძიების შენახვით, რომ ჯგუფი სიტყვებით ავტომატურად ივსებოდეს.',
+      search: 'ძიება', backGroups: '← ჯგუფები', edit: 'რედაქტირება', name: 'სახელი', autoSearch: 'ავტომატური ძიება (სიტყვები, ყველა უნდა ემთხვეოდეს)', emptyManual: 'ცარიელი = მხოლოდ ხელით დამატებული',
+      save: 'შენახვა', deleteGroup: 'ჯგუფის წაშლა', deleteGroupQ: n => 'წაიშალოს ჯგუფი „' + n + '“? კითხვები რჩება, მხოლოდ ჯგუფი იშლება.', testGroup: 'ტესტი ამ ჯგუფზე',
+      manual: n => n + ' ხელით დამატებული', bySearch: (n, q) => n + ' ძიებით: „' + q + '“', groupEmpty: 'ჯგუფი ცარიელია. დაამატეთ კითხვები ბარათის „ჯგუფი“ ღილაკით.',
+      newTest: 'ახალი ტესტი', inFilter: n => n + ' კითხვა ფილტრში', howMany: 'რამდენი კითხვა', all: 'ყველა', checking: 'შემოწმება', checkNow: 'ყოველ პასუხზე', checkEnd: 'ბოლოს, როგორც გამოცდაზე',
+      random: 'შემთხვევითი თანმიმდევრობა', start: 'დაწყება', testOnGroup: 'ტესტი ჯგუფზე', recent: 'ბოლო ტესტები',
+      question: 'კითხვა', answered: 'პასუხი', cancel: 'გაუქმება', finishQ: n => (n ? n + ' კითხვა უპასუხოა და არასწორად ჩაითვლება. ' : '') + 'დავასრულოთ?', result: 'შედეგი', next: 'შემდეგი', prev: '← წინა', finish: 'დასრულება',
+      wrong: 'არასწორი', total: 'სულ', repeatWrong: 'შეცდომების გამეორება', wrongToGroup: 'შეცდომები → ჯგუფში', review: 'გადახედვა', onlyWrong: 'მხოლოდ შეცდომები', noWrong: 'შეცდომა არ არის.',
+      mistakes: 'შეცდომები', groupCreated: (n, c) => 'შეიქმნა ჯგუფი „' + n + '“ (' + c + ').',
+      mistHint: 'კითხვები, რომლებზეც ოდესმე შეცდით. ✓ და ✗ სწორი და არასწორი პასუხების რაოდენობაა. სია იწმინდება მაშინ, როცა თქვენ წაშლით.', testMist: 'ტესტი შეცდომებზე', clearList: 'სიის გასუფთავება',
+      clearMistQ: n => 'წაიშლება შეცდომების ისტორია ამ ფილტრში (' + n + ').', noMist: 'ჯერ შეცდომა არ არის.', showing50: n => 'ნაჩვენებია 50 / ' + n + '. ტესტი ყველას მოიცავს.',
+      seen: 'ნანახი', of: n => n + '-დან', lastCorrect: 'ბოლოს სწორი', totalAnswers: 'სულ პასუხი', accuracy: n => 'სიზუსტე ' + n + '%', tests: 'ტესტი', best: n => 'საუკეთესო ' + n + '%', notes: 'ჩანაწერი', groups: 'ჯგუფი',
+      withNotes: 'კითხვები ჩანაწერებით', byTopic: 'თემების მიხედვით', seenOf: (a, b) => a + '/' + b + ' ნანახი', data: 'მონაცემები',
+      dataCloud: 'პროგრესი ინახება თქვენს ანგარიშზე და ჩანს ყველა მოწყობილობაზე.', dataLocal: 'პროგრესი ინახება მხოლოდ ამ ბრაუზერში.', resetAnswers: 'პასუხებისა და ტესტების წაშლა',
+      resetQ: 'წაიშლება ყველა პასუხი და ტესტი. ჩანაწერები და ჯგუფები რჩება. დარწმუნებული ხართ?', loadErr: 'კითხვების ჩატვირთვა ვერ მოხერხდა', reload: 'განაახლეთ გვერდი.', locale: 'ka-GE',
+      ai: 'AI', aiExplain: 'ახსენი', aiWhyNot: 'რატომ არა სხვები', aiMnemonic: 'დასამახსოვრებლად', aiPh: 'თქვენი კითხვა AI-სთვის…', send: 'გაგზავნა', stop: 'შეჩერება', thinking: 'ფიქრობს…',
+      aiUnavailable: 'AI მუშაობს მხოლოდ claude.ai-ზე გახსნილ ვერსიაში. აქ შეგიძლიათ დაიჯესტის კოპირება და ნებისმიერი AI-სთვის მიწოდება.', aiHistory: n => 'წინა პასუხები (' + n + ')',
+      aiDiscuss: 'AI-სთან განხილვა', aiDiscussHint: 'AI მიიღებს კითხვებს, სადაც ყველაზე მეტად ცდებით, თქვენს ჩანაწერებსა და ადრე დასმულ კითხვებს, და განიხილავს, რა აერთიანებთ და რა ისწავლოთ.',
+      aiStart: 'განხილვის დაწყება', aiContinue: 'განხილვის გაგრძელება', aiNew: 'ახალი განხილვა', copyDigest: 'დაიჯესტის კოპირება', copied: 'დაკოპირდა', digestOf: n => 'დაიჯესტი: ' + n + ' კითხვა',
+      aiErr: 'AI-მ ვერ უპასუხა', aiRate: 'ლიმიტი ამოიწურა, სცადეთ მოგვიანებით', aiNoData: 'ჯერ არ არის რაზე საუბარი: ჯერ უპასუხეთ კითხვებს.', aiTruncated: 'პასუხი შეიკვეცა, ჰკითხეთ ნაწილ-ნაწილ.', you: 'თქვენ', backMist: '← შეცდომები',
+      toastAdded: n => 'დაემატა ჯგუფში „' + n + '“', toastRemoved: n => 'ამოღებულია ჯგუფიდან „' + n + '“', toastNote: 'ჩანაწერი შენახულია', toastNoteDel: 'ჩანაწერი წაიშალა', toastGroup: n => 'ჯგუფი „' + n + '“ შეიქმნა',
+      langName: 'Georgian'
+    },
+    en: {
+      title: 'Residency Tests', loading: 'Loading…', theme: 'Theme: auto / dark / light', filter: 'Filter',
+      nav: ['Read', 'Test', 'Groups', 'Mistakes', 'Stats'],
+      years: { 1: 'Year 1', 2: 'Year 2', 3: 'Year 3', 0: 'No year' }, allYears: 'All years', allTopics: 'All topics', nTopics: n => n + ' topics',
+      q: n => n + ' questions', savedCloud: 'saved to account', savedLocal: 'saved in this browser', saveErr: 'Save failed, retrying',
+      year: 'Year', topic: 'Topic', filterHint: 'Nothing selected = everything. The filter applies to reading and tests.', done: 'Done', clear: 'Clear',
+      showAnswer: 'Show answer', correct: 'Correct', wrongIs: l => 'Wrong · correct is ' + l, unanswered: 'Unanswered', yoursIs: (a, b) => 'Your answer ' + a + ' · correct is ' + b,
+      note: 'Note', group: 'Group', removeFromGroup: 'Remove from group', notePh: 'Your note on this question…', del: 'Delete', autosave: 'saves automatically',
+      whichGroup: 'Which group?', alsoBySearch: 'this question also matches the search', noGroups: 'No groups yet.', newGroupName: 'New group name', create: 'Create', close: 'Close',
+      searchPh: 'Words or question number', scope: ['Anywhere', 'In statement', 'In answers'], hideAnswers: 'Hide answers', hide: 'Hide', shuffle: 'Shuffle', inOrder: 'In order',
+      found: n => n + ' questions found', saveSearch: 'Save search as group', notFound: 'No questions found.', more: (n, left) => n + ' more (' + left + ' left)', moreN: n => n + ' more',
+      groupFromSearch: 'Group from search', groupFromSearchHint: (where, w, n) => 'The group will automatically contain every question where ' + where + ' has: ' + w + ' (' + n + ' questions ignoring the filter). You can also add questions one by one afterwards.',
+      whereQ: 'the statement', whereA: 'the answers', whereAll: 'the statement or the answers', no: 'No', yes: 'Yes',
+      newGroup: 'New group', groupNamePh: 'Name, e.g. heart failure', groupsHint: 'Add questions one by one with the “Group” button on a card, or save a search on the Read page so the group fills itself by words.',
+      search: 'search', backGroups: '← Groups', edit: 'Edit', name: 'Name', autoSearch: 'Automatic search (words, all must match)', emptyManual: 'empty = only manually added',
+      save: 'Save', deleteGroup: 'Delete group', deleteGroupQ: n => 'Delete group “' + n + '”? The questions stay, only the group is removed.', testGroup: 'Test this group',
+      manual: n => n + ' added by hand', bySearch: (n, q) => n + ' by search: “' + q + '”', groupEmpty: 'The group is empty. Add questions with the “Group” button on a card.',
+      newTest: 'New test', inFilter: n => n + ' questions in filter', howMany: 'How many questions', all: 'All', checking: 'Checking', checkNow: 'After each answer', checkEnd: 'At the end, like the exam',
+      random: 'Random order', start: 'Start', testOnGroup: 'Test a group', recent: 'Recent tests',
+      question: 'Question', answered: 'Answered', cancel: 'Cancel', finishQ: n => (n ? n + ' questions are unanswered and will count as wrong. ' : '') + 'Finish?', result: 'Result', next: 'Next', prev: '← Previous', finish: 'Finish',
+      wrong: 'Wrong', total: 'Total', repeatWrong: 'Repeat mistakes', wrongToGroup: 'Mistakes → group', review: 'Review', onlyWrong: 'Only mistakes', noWrong: 'No mistakes.',
+      mistakes: 'Mistakes', groupCreated: (n, c) => 'Group “' + n + '” created (' + c + ').',
+      mistHint: 'Questions you have ever got wrong. ✓ and ✗ are the counts of right and wrong answers. The list clears only when you clear it.', testMist: 'Test mistakes', clearList: 'Clear list',
+      clearMistQ: n => 'The mistake history in this filter (' + n + ') will be deleted.', noMist: 'No mistakes yet.', showing50: n => 'Showing 50 / ' + n + '. The test covers all of them.',
+      seen: 'Seen', of: n => 'of ' + n, lastCorrect: 'Last answer correct', totalAnswers: 'Total answers', accuracy: n => 'accuracy ' + n + '%', tests: 'Tests', best: n => 'best ' + n + '%', notes: 'Notes', groups: 'Groups',
+      withNotes: 'Questions with notes', byTopic: 'By topic', seenOf: (a, b) => a + '/' + b + ' seen', data: 'Data',
+      dataCloud: 'Progress is saved to your account and visible on all devices.', dataLocal: 'Progress is saved only in this browser.', resetAnswers: 'Delete answers and tests',
+      resetQ: 'All answers and tests will be deleted. Notes and groups stay. Are you sure?', loadErr: 'Could not load the questions', reload: 'Reload the page.', locale: 'en-GB',
+      ai: 'AI', aiExplain: 'Explain', aiWhyNot: 'Why not the others', aiMnemonic: 'Memory aid', aiPh: 'Your question for the AI…', send: 'Send', stop: 'Stop', thinking: 'Thinking…',
+      aiUnavailable: 'AI works only in the version opened on claude.ai. Here you can copy the digest and give it to any AI.', aiHistory: n => 'Earlier answers (' + n + ')',
+      aiDiscuss: 'Discuss with AI', aiDiscussHint: 'The AI receives the questions you miss most, your notes and the questions you asked before, and discusses what they have in common and what to study.',
+      aiStart: 'Start discussion', aiContinue: 'Continue discussion', aiNew: 'New discussion', copyDigest: 'Copy digest', copied: 'Copied', digestOf: n => 'Digest: ' + n + ' questions',
+      aiErr: 'The AI did not answer', aiRate: 'Limit reached, try again later', aiNoData: 'Nothing to discuss yet: answer some questions first.', aiTruncated: 'The answer was cut short, ask in smaller parts.', you: 'You', backMist: '← Mistakes',
+      toastAdded: n => 'Added to “' + n + '”', toastRemoved: n => 'Removed from “' + n + '”', toastNote: 'Note saved', toastNoteDel: 'Note deleted', toastGroup: n => 'Group “' + n + '” created',
+      langName: 'English'
+    }
+  };
+  let lang = 'ka'; try { lang = localStorage.getItem('rt-lang') || 'ka' } catch (e) {} if (!STR[lang]) lang = 'ka';
+  const T = () => STR[lang];
+  function paintChrome() {
+    document.documentElement.lang = lang; document.title = T().title; $('titleText').textContent = T().title;
+    $('langBtn').textContent = lang === 'ka' ? 'EN' : 'ქა'; $('themeBtn').title = T().theme; $('filterBtn').setAttribute('aria-label', T().filter);
+    ['nRead', 'nTest', 'nGroups', 'nMist', 'nStats'].forEach((id, i) => { $(id).querySelector('span').textContent = T().nav[i] });
+  }
+
   const LET = 'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ';
-  const YEARS = [[1, 'I წელი'], [2, 'II წელი'], [3, 'III წელი'], [0, 'წლის გარეშე']];
+  const YEAR_KEYS = [1, 2, 3, 0];
+  const yearName = v => T().years[v];
   const PAGE = 30;
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const fmtDate = ms => new Date(ms).toLocaleDateString(T().locale, { day: 'numeric', month: 'short' });
 
   let BANK = [], byN = new Map(), topics = [];
-  // U: saved state. wrong[n] = times wrong, right[n] = times right, history = tests, prefs = filters and options
-  let U = { wrong: {}, right: {}, history: [], prefs: { years: [], topics: [], hide: false, count: 20, check: 'now', shuffle: true } };
+  let U = { wrong: {}, right: {}, notes: {}, groups: [], history: [], ai: {}, aiChat: null, prefs: { years: [], topics: [], hide: false, count: 20, check: 'now', shuffle: true, scope: 'all' } };
   let view = 'read', filterOpen = false, search = '', shown = PAGE, order = null, revealed = new Set(), picks = new Map(), test = null;
+  let openNote = new Set(), openPick = new Set(), openAI = new Set(), curGroup = null, groupEdit = false;
+  let sampleFn = null, aiBusy = null;   // sampleFn: the page's "ask Claude" capability when the viewer grants it; aiBusy: AbortController of the running call
+  const NO_AI = !!window.__NO_AI;        // set by the standalone (GitHub Pages) build, where no AI is available: hides every AI control
+  const justAnswered = new Set();        // question ids answered by the tap that triggered the current redraw: they get the settle animation once
+  const scrollPos = {};                  // per-tab scroll memory
+  let moreIO = null, toastT = null, searchT = null;
+  function toast(text) { const el = $('toast'); el.textContent = text; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 1600) }
+  // infinite scroll: append the next page when the end comes near; the button stays as a fallback
+  function attachMore(listEl, moreEl, items, cardOpts) {
+    if (moreIO) { moreIO.disconnect(); moreIO = null }
+    moreEl.style.minHeight = '1px';
+    const paint = () => { moreEl.innerHTML = items.length > shown ? `<button class="btn wide" type="button">${T().moreN(Math.min(PAGE, items.length - shown))}</button>` : '' };
+    const next = () => { if (shown >= items.length) return; const from = shown; shown = Math.min(items.length, shown + PAGE); items.slice(from, shown).forEach(q => listEl.appendChild(qCard(q, cardOpts()))); paint() };
+    paint(); moreEl.onclick = e => { if (e.target.closest('button')) next() };
+    if ('IntersectionObserver' in window) { moreIO = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) next() }, { rootMargin: '600px 0px' }); moreIO.observe(moreEl) }
+  }
+
+  $('langBtn').onclick = () => { lang = lang === 'ka' ? 'en' : 'ka'; try { localStorage.setItem('rt-lang', lang) } catch (e) {} paintChrome(); render() };
 
   /* ---------- theme override (per viewer, kept in this browser) ---------- */
   const ICO = { auto: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 3a9 9 0 0 1 0 18" fill="currentColor"/>', dark: '<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>', light: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>' };
   function applyTheme(t) { const r = document.documentElement; if (t === 'auto') r.removeAttribute('data-force'); else r.setAttribute('data-force', t); $('themeIco').innerHTML = ICO[t] }
   let theme = 'auto'; try { theme = localStorage.getItem('rt-theme') || 'auto' } catch (e) {} if (!ICO[theme]) theme = 'auto'; applyTheme(theme);
   $('themeBtn').onclick = () => { theme = theme === 'auto' ? 'dark' : theme === 'dark' ? 'light' : 'auto'; try { localStorage.setItem('rt-theme', theme) } catch (e) {} applyTheme(theme) };
+  paintChrome(); $('subtitle').textContent = T().loading;
 
-  /* ---------- storage ---------- */
+  /* ---------- storage: account store when available, this browser otherwise ---------- */
   const store = { col: null, mode: 'local', dirty: new Set(), timer: null, chain: Promise.resolve() };
-  const DOCS = ['answers', 'history', 'prefs'];
-  const body = n => n === 'answers' ? { wrong: U.wrong, right: U.right } : n === 'history' ? { list: U.history.slice(-100) } : { ...U.prefs };
-  const apply = (n, b) => { if (!b) return; if (n === 'answers') { U.wrong = b.wrong || {}; U.right = b.right || {} } else if (n === 'history') U.history = b.list || []; else Object.assign(U.prefs, b) };
+  const DOCS = ['answers', 'history', 'prefs', 'notes', 'groups', 'ai'];
+  const body = n => n === 'answers' ? { wrong: U.wrong, right: U.right } : n === 'history' ? { list: U.history.slice(-100) } : n === 'notes' ? { map: U.notes } : n === 'groups' ? { list: U.groups } : n === 'ai' ? { map: U.ai, chat: U.aiChat } : { ...U.prefs };
+  // snapshots from the store are frozen objects: copy before the page mutates them in place
+  const apply = (n, b) => { if (!b) return; b = JSON.parse(JSON.stringify(b)); if (n === 'answers') { U.wrong = b.wrong || {}; U.right = b.right || {} } else if (n === 'history') U.history = b.list || []; else if (n === 'notes') U.notes = b.map || {}; else if (n === 'groups') U.groups = b.list || []; else if (n === 'ai') { U.ai = b.map || {}; U.aiChat = b.chat || null } else Object.assign(U.prefs, b) };
   async function initStore() {
     let db = null, user = null;
     try { if (window.claude && claude.use) [db, user] = await Promise.all([claude.use('db'), claude.use('user')]) } catch (e) {}
-    const uid = user ? await user.id().catch(() => null) : null;
+    const id = user ? await user.id().catch(() => null) : null;
     const loc = (() => { try { const v = localStorage.getItem('rt'); return v ? JSON.parse(v) : null } catch (e) { return null } })();
-    if (db && uid) {
-      store.col = db.collection('data/users/' + uid); store.mode = 'cloud';
+    if (db && id) {
+      store.col = db.collection('data/users/' + id); store.mode = 'cloud';
       const snaps = await Promise.all(DOCS.map(d => store.col.doc(d).get().catch(() => null)));
       const any = snaps.some(s => s && s.exists);
       snaps.forEach((s, i) => { if (s && s.exists) apply(DOCS[i], s.data()) });
       if (!any && loc) { applyLocal(loc); DOCS.forEach(dirty) }
     } else if (loc) applyLocal(loc);
   }
-  function applyLocal(loc) { U.wrong = loc.wrong || {}; U.right = loc.right || {}; U.history = loc.history || []; Object.assign(U.prefs, loc.prefs || {}) }
+  function applyLocal(loc) { U.wrong = loc.wrong || {}; U.right = loc.right || {}; U.notes = loc.notes || {}; U.groups = loc.groups || []; U.history = loc.history || []; U.ai = loc.ai || {}; U.aiChat = loc.aiChat || null; Object.assign(U.prefs, loc.prefs || {}) }
   function dirty(n) { store.dirty.add(n); clearTimeout(store.timer); store.timer = setTimeout(flush, 1200) }
   function flush() {
     clearTimeout(store.timer); if (!store.dirty.size) return;
     const names = [...store.dirty]; store.dirty.clear();
     try { localStorage.setItem('rt', JSON.stringify(U)) } catch (e) {}
     if (store.mode !== 'cloud') return;
-    store.chain = store.chain.then(async () => { for (const n of names) { try { await store.col.doc(n).set(body(n)) } catch (e) { if (e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked')) { store.mode = 'local'; paintSub(); return } store.dirty.add(n); paintSub('შენახვა ვერ მოხერხდა, ვცდი ხელახლა'); clearTimeout(store.timer); store.timer = setTimeout(flush, 15000); return } } paintSub() });
+    store.chain = store.chain.then(async () => { for (const n of names) { try { await store.col.doc(n).set(body(n)) } catch (e) { if (e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked')) { store.mode = 'local'; paintSub(); return } store.dirty.add(n); paintSub(T().saveErr); clearTimeout(store.timer); store.timer = setTimeout(flush, 15000); return } } paintSub() });
   }
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush() }); window.addEventListener('pagehide', flush);
+  // surface script errors in the subtitle: the artifact frame's console is not reachable from outside
+  window.addEventListener('error', e => { try { $('subtitle').textContent = 'JS: ' + (e.message || e.type) + ' @' + (e.lineno || '') } catch (x) {} });
+  window.addEventListener('unhandledrejection', e => { try { $('subtitle').textContent = 'JS: ' + ((e.reason && (e.reason.message || e.reason.code)) || e.reason) } catch (x) {} });
 
-  /* ---------- filter ---------- */
+  /* ---------- filter and word search ---------- */
   const P = () => U.prefs;
   const inFilter = q => (!P().years.length || P().years.includes(q.y)) && (!P().topics.length || P().topics.includes(q.t));
-  const matchText = q => { const t = search.trim().toLowerCase(); return !t || q.q.toLowerCase().includes(t) || q.opts.some(o => o.toLowerCase().includes(t)) || String(q.n) === t };
-  function pool() { let p = BANK.filter(q => inFilter(q) && matchText(q)); if (order) { const pos = new Map(order.map((n, i) => [n, i])); p = p.slice().sort((a, b) => pos.get(a.n) - pos.get(b.n)) } return p }
-  function filterLabel() { const y = P().years.length ? P().years.map(v => YEARS.find(x => x[0] === v)[1]).join(', ') : 'ყველა წელი'; const t = P().topics.length ? (P().topics.length > 2 ? P().topics.length + ' თემა' : P().topics.join(', ')) : 'ყველა თემა'; return y + ' · ' + t }
+  const words = s => s.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  function matchWords(q, text, scope) {
+    const ws = words(text); if (!ws.length) return true;
+    if (ws.length === 1 && /^\d+$/.test(ws[0]) && String(q.n) === ws[0]) return true;
+    const hayQ = q.q.toLowerCase(), hayA = q.opts.join(' \n ').toLowerCase();
+    return ws.every(w => (scope !== 'a' && hayQ.includes(w)) || (scope !== 'q' && hayA.includes(w)));
+  }
+  function pool() { let p = BANK.filter(q => inFilter(q) && matchWords(q, search, P().scope)); if (order) { const pos = new Map(order.map((n, i) => [n, i])); p = p.slice().sort((a, b) => pos.get(a.n) - pos.get(b.n)) } return p }
+  function hl(text, mode) {
+    const ws = search && (mode === 'read' || mode === 'hidden') ? words(search).filter(w => !/^\d+$/.test(w)) : []; let out = esc(text); if (!ws.length) return out;
+    ws.forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); out = out.replace(re, m => '\u0001' + m + '\u0002') });
+    return out.replace(/\u0001/g, '<mark>').replace(/\u0002/g, '</mark>');
+  }
+  function filterLabel() { const y = P().years.length ? P().years.map(yearName).join(', ') : T().allYears; const t = P().topics.length ? (P().topics.length > 2 ? T().nTopics(P().topics.length) : P().topics.join(', ')) : T().allTopics; return y + ' · ' + t }
   function paintSub(msg) {
     const n = BANK.filter(inFilter).length;
-    $('subtitle').textContent = msg || `${filterLabel()} · ${n} კითხვა · ${store.mode === 'cloud' ? 'ინახება ანგარიშზე' : 'ინახება ბრაუზერში'}`;
+    $('subtitle').textContent = msg || `${filterLabel()} · ${T().q(n)} · ${store.mode === 'cloud' ? T().savedCloud : T().savedLocal}`;
     const fc = P().years.length + P().topics.length; $('filterCount').textContent = fc ? fc : ''; $('filterBtn').classList.toggle('on', fc > 0);
-    const m = Object.keys(U.wrong).filter(n => U.wrong[n] > (U.right[n] || 0) * 0 && byN.has(+n)).length; $('mistBadge').hidden = !m; $('mistBadge').textContent = m;
+    const m = Object.keys(U.wrong).filter(n => U.wrong[n] > 0 && byN.has(+n)).length; $('mistBadge').hidden = !m; $('mistBadge').textContent = m;
   }
 
+  /* ---------- groups ---------- */
+  const groupById = id => U.groups.find(g => g.id === id);
+  function groupMembers(g) { const set = new Set(g.ids || []); if (g.q && words(g.q).length) BANK.forEach(q => { if (matchWords(q, g.q, g.scope || 'all')) set.add(q.n) }); return BANK.filter(q => set.has(q.n)) }
+  function createGroup(name, q, scope) { const g = { id: uid(), name: name.trim() || T().newGroup, ids: [], q: (q || '').trim(), scope: scope || 'all', at: Date.now() }; U.groups.push(g); dirty('groups'); return g }
+  function toggleInGroup(g, n) { const i = g.ids.indexOf(n); if (i >= 0) g.ids.splice(i, 1); else g.ids.push(n); dirty('groups') }
+  const groupIcon = '<svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+
   /* ---------- nav ---------- */
-  function go(v) { view = v; filterOpen = false; ['Read', 'Test', 'Mist', 'Stats'].forEach(x => $('n' + x).setAttribute('aria-current', v === x.toLowerCase())); render(); window.scrollTo({ top: 0 }) }
-  $('nRead').onclick = () => go('read'); $('nTest').onclick = () => go('test'); $('nMist').onclick = () => go('mist'); $('nStats').onclick = () => go('stats');
+  function go(v) {
+    scrollPos[view] = window.scrollY; view = v; filterOpen = false;
+    ['Read', 'Test', 'Groups', 'Mist', 'Stats'].forEach(x => $('n' + x).setAttribute('aria-current', v === x.toLowerCase() || (v === 'ai' && x === 'Mist')));
+    const pg = $('page'); pg.classList.remove('swap'); void pg.offsetWidth; pg.classList.add('swap');
+    render(); window.scrollTo({ top: ['read', 'groups', 'mist', 'stats'].includes(v) ? (scrollPos[v] || 0) : 0 });
+  }
+  const toTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('nRead').onclick = () => view === 'read' && !filterOpen ? toTop() : go('read');
+  $('nTest').onclick = () => view === 'test' && !filterOpen ? toTop() : go('test');
+  $('nGroups').onclick = () => { if (view === 'groups' && !curGroup && !filterOpen) return toTop(); curGroup = null; go('groups') };
+  $('nMist').onclick = () => view === 'mist' && !filterOpen ? toTop() : go('mist');
+  $('nStats').onclick = () => view === 'stats' && !filterOpen ? toTop() : go('stats');
   $('filterBtn').onclick = () => { filterOpen = !filterOpen; render(); window.scrollTo({ top: 0 }) };
   function render() {
+    if (!BANK.length) return;
     paintSub(); const pg = $('page'); pg.innerHTML = '';
     if (filterOpen) return renderFilter(pg);
-    if (view === 'read') renderRead(pg); else if (view === 'test') renderTest(pg); else if (view === 'mist') renderMist(pg); else renderStats(pg);
+    if (view === 'read') renderRead(pg); else if (view === 'test') renderTest(pg); else if (view === 'groups') renderGroups(pg); else if (view === 'mist') renderMist(pg); else if (view === 'ai') renderAiChat(pg); else renderStats(pg);
   }
 
   /* ---------- FILTER ---------- */
   function renderFilter(pg) {
     const cnt = f => BANK.filter(f).length;
     pg.innerHTML = `<div class="stack">
-      <div class="card"><h2>წელი</h2><div class="chips" id="yc">${YEARS.map(([v, n]) => `<button type="button" class="chip" data-y="${v}" aria-pressed="${P().years.includes(v)}"><span>${n}</span><span class="n">${cnt(q => q.y === v && (!P().topics.length || P().topics.includes(q.t)))}</span></button>`).join('')}</div></div>
-      <div class="card"><h2>თემა</h2><div class="chips" id="tc">${topics.map(t => `<button type="button" class="chip" data-t="${esc(t)}" aria-pressed="${P().topics.includes(t)}"><span>${esc(t)}</span><span class="n">${cnt(q => q.t === t && (!P().years.length || P().years.includes(q.y)))}</span></button>`).join('')}</div></div>
-      <p class="hint">არცერთი არჩეული = ყველა. ფილტრი მოქმედებს კითხვაზეც და ტესტზეც.</p>
-      <div class="row"><button class="btn primary" type="button" id="apply" style="flex:1">მზადაა · ${BANK.filter(inFilter).length} კითხვა</button><button class="btn" type="button" id="clr">გასუფთავება</button></div></div>`;
+      <div class="card"><h2>${T().year}</h2><div class="chips" id="yc">${YEAR_KEYS.map(v => `<button type="button" class="chip" data-y="${v}" aria-pressed="${P().years.includes(v)}"><span>${yearName(v)}</span><span class="n">${cnt(q => q.y === v && (!P().topics.length || P().topics.includes(q.t)))}</span></button>`).join('')}</div></div>
+      <div class="card"><h2>${T().topic}</h2><div class="chips" id="tc">${topics.map(t => `<button type="button" class="chip" data-t="${esc(t)}" aria-pressed="${P().topics.includes(t)}"><span>${esc(t)}</span><span class="n">${cnt(q => q.t === t && (!P().years.length || P().years.includes(q.y)))}</span></button>`).join('')}</div></div>
+      <p class="hint">${T().filterHint}</p>
+      <div class="row"><button class="btn primary" type="button" id="apply" style="flex:1">${T().done} · ${T().q(BANK.filter(inFilter).length)}</button><button class="btn" type="button" id="clr">${T().clear}</button></div></div>`;
     $('yc').onclick = e => { const b = e.target.closest('button'); if (!b) return; const v = +b.dataset.y; P().years = P().years.includes(v) ? P().years.filter(x => x !== v) : [...P().years, v]; dirty('prefs'); shown = PAGE; render() };
     $('tc').onclick = e => { const b = e.target.closest('button'); if (!b) return; const t = b.dataset.t; P().topics = P().topics.includes(t) ? P().topics.filter(x => x !== t) : [...P().topics, t]; dirty('prefs'); shown = PAGE; render() };
     $('clr').onclick = () => { P().years = []; P().topics = []; dirty('prefs'); shown = PAGE; render() };
     $('apply').onclick = () => { filterOpen = false; render() };
   }
 
-  /* ---------- READ ---------- */
+  /* ---------- question card ---------- */
   function qCard(q, opts) {
-    // opts: {mode: 'read'|'hidden'|'testNow'|'testEnd'|'review', picked, done}
     const el = document.createElement('article'); el.className = 'q'; el.id = 'q' + q.n;
     const m = opts.mode, picked = m === 'hidden' ? picks.get(q.n) : opts.picked;
     const show = m === 'read' || m === 'review' || (m === 'hidden' && revealed.has(q.n)) || (m === 'testNow' && picked !== undefined);
     const clickable = (m === 'testNow' && picked === undefined) || m === 'testEnd' || (m === 'hidden' && !show);
-    const w = U.wrong[q.n] || 0, r = U.right[q.n] || 0;
-    let h = `<div class="qh"><span class="num">#${q.n}</span><span>${esc(q.t)}${q.y ? ' · ' + YEARS.find(x => x[0] === q.y)[1] : ''}</span>${(w || r) && m !== 'testEnd' ? `<span>${r ? '<span style="color:var(--good)">✓' + r + '</span>' : ''} ${w ? '<span style="color:var(--bad)">✗' + w + '</span>' : ''}</span>` : ''}</div><p class="qt">${esc(q.q)}</p><ul class="opts">`;
+    const tools = m === 'read' || m === 'hidden' || m === 'review';
+    const w = U.wrong[q.n] || 0, r = U.right[q.n] || 0, note = U.notes[q.n] || '';
+    const inGroups = U.groups.filter(g => g.ids.includes(q.n)).length;
+    const fresh = justAnswered.has(q.n); if (fresh) justAnswered.delete(q.n);
+    let h = `<div class="qh"><span class="num">#${q.n}</span><span>${esc(q.t)}${q.y ? ' · ' + yearName(q.y) : ''}</span>${(w || r) && m !== 'testEnd' ? `<span>${r ? '<span style="color:var(--good)">✓' + r + '</span>' : ''} ${w ? '<span style="color:var(--bad)">✗' + w + '</span>' : ''}</span>` : ''}</div><p class="qt">${hl(q.q, m)}</p><ul class="opts">`;
     q.opts.forEach((o, i) => {
       let cls = 'opt'; if (show && i === q.ans) cls += ' ok'; else if (show && picked === i) cls += ' bad'; else if (m === 'testEnd' && picked === i) cls += ' sel';
+      if (fresh && picked === i) cls += ' pop' + (i === q.ans ? '' : ' nudge');
       const tag = clickable ? 'button' : 'div';
-      h += `<li><${tag} class="${cls}" data-i="${i}"${clickable ? ' type="button"' : ''}><span class="let">${LET[i]}</span><span>${esc(o)}</span></${tag}></li>`;
+      h += `<li><${tag} class="${cls}" data-i="${i}"${clickable ? ' type="button"' : ''}><span class="let">${LET[i]}</span><span>${hl(o, m)}</span></${tag}></li>`;
     });
     h += '</ul>';
-    if (m === 'hidden' && !show) h += `<button class="btn reveal" type="button" data-act="reveal">პასუხის ჩვენება</button>`;
-    if (m === 'hidden' && show && picked !== undefined) h += `<div class="fb"><span class="verdict ${picked === q.ans ? 'good' : 'bad'}">${picked === q.ans ? 'სწორია' : 'არასწორია · სწორია ' + LET[q.ans]}</span></div>`;
-    if (m === 'testNow' && picked !== undefined) h += `<div class="fb"><span class="verdict ${picked === q.ans ? 'good' : 'bad'}">${picked === q.ans ? 'სწორია' : 'არასწორია · სწორია ' + LET[q.ans]}</span></div>`;
-    if (m === 'review') h += `<div class="fb">${picked === undefined ? '<span class="verdict" style="color:var(--muted)">უპასუხო</span>' : picked === q.ans ? '<span class="verdict good">სწორია</span>' : `<span class="verdict bad">თქვენი პასუხი ${LET[picked]} · სწორია ${LET[q.ans]}</span>`}</div>`;
+    const verdict = p => p === q.ans ? `<span class="verdict good${fresh ? ' rise' : ''}">${T().correct}</span>` : `<span class="verdict bad${fresh ? ' rise' : ''}">${T().wrongIs(LET[q.ans])}</span>`;
+    if (m === 'hidden' && !show) h += `<button class="btn reveal" type="button" data-act="reveal">${T().showAnswer}</button>`;
+    if ((m === 'hidden' || m === 'testNow') && show && picked !== undefined) h += `<div class="fb">${verdict(picked)}</div>`;
+    if (m === 'review') h += `<div class="fb">${picked === undefined ? `<span class="verdict" style="color:var(--muted)">${T().unanswered}</span>` : picked === q.ans ? `<span class="verdict good">${T().correct}</span>` : `<span class="verdict bad">${T().yoursIs(LET[picked], LET[q.ans])}</span>`}</div>`;
+    if (note && !openNote.has(q.n)) h += `<div class="note">${esc(note)}</div>`;
+    if (tools) {
+      h += `<div class="tools"><button class="ib ${note ? 'has' : ''}" type="button" data-act="note"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>${T().note}</button>
+        <button class="ib ${inGroups ? 'has' : ''}" type="button" data-act="group">${groupIcon}<span>${T().group}${inGroups ? ' · ' + inGroups : ''}</span></button>
+        ${sampleFn ? `<button class="ib ${(U.ai[q.n] || []).length ? 'has' : ''}" type="button" data-act="ai"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>${T().ai}${(U.ai[q.n] || []).length ? ' · ' + U.ai[q.n].length : ''}</button>` : ''}
+        ${opts.group && opts.group.ids.includes(q.n) ? `<button class="ib" type="button" data-act="ungroup">${T().removeFromGroup}</button>` : ''}</div>`;
+      if (openAI.has(q.n)) {
+        const hist = U.ai[q.n] || [];
+        h += `<div class="panel" data-aipanel><div class="row"><button class="btn sm" type="button" data-act="aiPreset" data-p="explain">${T().aiExplain}</button><button class="btn sm" type="button" data-act="aiPreset" data-p="whynot">${T().aiWhyNot}</button><button class="btn sm" type="button" data-act="aiPreset" data-p="mnemonic">${T().aiMnemonic}</button></div>
+          <div class="row" style="margin-top:8px"><input class="txt" type="text" data-act="aiText" placeholder="${T().aiPh}" style="flex:1;min-width:0"><button class="btn sm primary" type="button" data-act="aiAsk">${T().send}</button></div>
+          <p class="aiq" data-aiq hidden></p><div class="aiout" data-aiout></div><div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-act="aiStop" hidden>${T().stop}</button><button class="btn sm" type="button" data-act="aiClose">${T().close}</button></div>
+          ${hist.length ? `<details style="margin-top:10px"><summary class="hint" style="cursor:pointer">${T().aiHistory(hist.length)}</summary>${hist.slice().reverse().map(x => `<p class="aiq">${esc(x.q)} · ${fmtDate(x.at)}</p><div class="aiout md">${md(x.a)}</div>`).join('')}</details>` : ''}</div>`;
+      }
+      if (openNote.has(q.n)) h += `<div class="panel"><textarea data-act="noteText" placeholder="${T().notePh}">${esc(note)}</textarea><div class="row" style="margin-top:8px"><button class="btn sm primary" type="button" data-act="noteDone">${T().done}</button>${note ? `<button class="btn sm danger" type="button" data-act="noteDel">${T().del}</button>` : ''}<span class="hint">${T().autosave}</span></div></div>`;
+      if (openPick.has(q.n)) h += `<div class="panel"><h2>${T().whichGroup}</h2>${U.groups.length ? U.groups.map(g => `<label class="g"><input type="checkbox" data-g="${g.id}" ${g.ids.includes(q.n) ? 'checked' : ''}><span>${esc(g.name)}<br><small>${T().q(groupMembers(g).length)}${g.q && matchWords(q, g.q, g.scope) ? ' · ' + T().alsoBySearch : ''}</small></span></label>`).join('') : `<p class="hint">${T().noGroups}</p>`}
+        <div class="row" style="margin-top:8px"><input class="txt" type="text" data-act="newName" placeholder="${T().newGroupName}" style="flex:1;min-width:0"><button class="btn sm primary" type="button" data-act="newGroup">${T().create}</button></div>
+        <div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-act="pickDone">${T().close}</button></div></div>`;
+    }
     el.innerHTML = h;
+    const redraw = () => el.replaceWith(qCard(q, opts));
     el.addEventListener('click', e => {
-      const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.act === 'reveal') { revealed.add(q.n); el.replaceWith(qCard(q, opts)) }
-      else if (b.classList.contains('opt') && m === 'hidden') { const i = +b.dataset.i; picks.set(q.n, i); revealed.add(q.n); const s = i === q.ans ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers'); el.replaceWith(qCard(q, opts)) }
+      const b = e.target.closest('button'); if (!b) return; const a = b.dataset.act;
+      if (a === 'reveal') { revealed.add(q.n); redraw() }
+      else if (a === 'note') { if (openNote.has(q.n)) openNote.delete(q.n); else openNote.add(q.n); redraw(); if (openNote.has(q.n)) { const t = document.querySelector('#q' + q.n + ' textarea'); if (t) t.focus() } }
+      else if (a === 'noteDone') { openNote.delete(q.n); if (U.notes[q.n]) toast(T().toastNote); redraw() }
+      else if (a === 'noteDel') { delete U.notes[q.n]; dirty('notes'); openNote.delete(q.n); toast(T().toastNoteDel); redraw() }
+      else if (a === 'group') { if (openPick.has(q.n)) openPick.delete(q.n); else openPick.add(q.n); redraw() }
+      else if (a === 'pickDone') { openPick.delete(q.n); redraw() }
+      else if (a === 'newGroup') { const inp = el.querySelector('[data-act="newName"]'); const g = createGroup(inp.value, '', 'all'); g.ids.push(q.n); dirty('groups'); toast(T().toastGroup(g.name)); redraw() }
+      else if (a === 'ungroup') { toggleInGroup(opts.group, q.n); if (opts.onChange) opts.onChange(); else redraw() }
+      else if (a === 'ai') { if (openAI.has(q.n)) openAI.delete(q.n); else openAI.add(q.n); redraw() }
+      else if (a === 'aiClose') { openAI.delete(q.n); redraw() }
+      else if (a === 'aiStop') { if (aiBusy) aiBusy.abort() }
+      else if (a === 'aiPreset' || a === 'aiAsk') {
+        const inp = el.querySelector('[data-act="aiText"]'); const p = b.dataset.p;
+        const label = a === 'aiAsk' ? inp.value.trim() : p === 'explain' ? T().aiExplain : p === 'whynot' ? T().aiWhyNot : T().aiMnemonic;
+        if (!label) return inp.focus();
+        const task = a === 'aiAsk' ? label : p === 'explain' ? 'Explain why the marked answer is correct and the key concept behind it, in a few short paragraphs.' : p === 'whynot' ? 'For each of the other options explain in one or two sentences why it is wrong.' : 'Give a short, memorable memory aid for this fact.';
+        askAboutQuestion(q, label, task, el);
+      }
+      else if (b.classList.contains('opt') && m === 'hidden') { const i = +b.dataset.i; picks.set(q.n, i); revealed.add(q.n); const s = i === q.ans ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers'); justAnswered.add(q.n); redraw() }
       else if (b.classList.contains('opt') && opts.onPick) opts.onPick(+b.dataset.i);
     });
+    el.addEventListener('change', e => { const c = e.target.closest('input[data-g]'); if (c) { const g = groupById(c.dataset.g); toggleInGroup(g, q.n); toast(g.ids.includes(q.n) ? T().toastAdded(g.name) : T().toastRemoved(g.name)); const t = el.querySelector('[data-act="group"]'); const k = U.groups.filter(g => g.ids.includes(q.n)).length; t.classList.toggle('has', k > 0); t.querySelector('span').textContent = T().group + (k ? ' · ' + k : '') } });
+    el.addEventListener('input', e => { if (e.target.dataset.act === 'noteText') { const v = e.target.value; if (v.trim()) U.notes[q.n] = v; else delete U.notes[q.n]; dirty('notes') } });
+    el.addEventListener('keydown', e => { if (e.target.dataset.act === 'newName' && e.key === 'Enter') { e.preventDefault(); el.querySelector('[data-act="newGroup"]').click() } });
     return el;
   }
+
+  /* ---------- AI ---------- */
+  const tutorIntro = () => `You are a tutor preparing a doctor for the internal medicine residency exam in Georgia. The questions are in Georgian. Reply in ${T().langName}. Be concrete and concise; do not restate the whole question. Format with light Markdown only: short paragraphs, **bold** for key terms, simple "-" bullet lists, at most "###" headings. No tables.`;
+  // minimal Markdown to HTML for AI replies: paragraphs, bullets, numbered lists, headings, bold, italic, code
+  function md(src) {
+    const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*\w])\*(?!\s)([^*]+?)\*(?!\w)/g, '$1<em>$2</em>').replace(/`([^`]+)`/g, '<code>$1</code>');
+    let out = '', list = null, para = [];
+    const flushP = () => { if (para.length) { out += '<p>' + inline(para.join(' ')) + '</p>'; para = [] } };
+    const closeList = () => { if (list) { out += '</' + list + '>'; list = null } };
+    for (const raw of String(src).split('\n')) {
+      const l = raw.trimEnd(); let m;
+      if (!l.trim()) { flushP(); closeList(); continue }
+      if ((m = l.match(/^#{1,6}\s+(.*)$/))) { flushP(); closeList(); out += '<h4>' + inline(m[1]) + '</h4>'; continue }
+      if ((m = l.match(/^\s*[-*•]\s+(.*)$/))) { flushP(); if (list !== 'ul') { closeList(); out += '<ul>'; list = 'ul' } out += '<li>' + inline(m[1]) + '</li>'; continue }
+      if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))) { flushP(); if (list !== 'ol') { closeList(); out += '<ol>'; list = 'ol' } out += '<li>' + inline(m[1]) + '</li>'; continue }
+      closeList(); para.push(l);
+    }
+    flushP(); closeList(); return out;
+  }
+  function qText(q) { const w = U.wrong[q.n] || 0, r = U.right[q.n] || 0; return `Question #${q.n} (${q.t}${q.y ? ', year ' + q.y : ''}):\n${q.q}\n` + q.opts.map((o, i) => `${LET[i]}) ${o}${i === q.ans ? '   [CORRECT]' : ''}`).join('\n') + (U.notes[q.n] ? `\nStudent's own note: ${U.notes[q.n]}` : '') + `\nStudent's record on this question: ${r} right, ${w} wrong.` }
+  async function runSample(input, outEl, onDone) {
+    if (!sampleFn) return;
+    if (aiBusy) aiBusy.abort();
+    const ctl = new AbortController(); aiBusy = ctl; outEl.classList.add('md'); outEl.textContent = T().thinking;
+    try {
+      const res = await sampleFn(input, { cache: false, signal: ctl.signal, onText: ({ text }) => { outEl.innerHTML = md(text) } });
+      outEl.innerHTML = md(res.text + (res.truncated ? '\n\n' + T().aiTruncated : ''));
+      if (aiBusy === ctl) aiBusy = null; onDone(res.text);
+    } catch (e) {
+      if (aiBusy === ctl) aiBusy = null;
+      if (e && e.code === 'cancelled') { outEl.innerHTML = md(e.text || ''); return }
+      if (e && e.code === 'not_granted') { sampleFn = null; outEl.textContent = T().aiUnavailable; return }
+      outEl.textContent = (e && e.code === 'rate_limited') ? T().aiRate : T().aiErr + (e && e.message ? ': ' + e.message : '');
+    }
+  }
+  function askAboutQuestion(q, label, task, el) {
+    const out = el.querySelector('[data-aiout]'), qEl = el.querySelector('[data-aiq]'), stop = el.querySelector('[data-act="aiStop"]');
+    qEl.textContent = label; qEl.hidden = false; stop.hidden = false;
+    const prior = (U.ai[q.n] || []).slice(-2).map(x => `Earlier the student asked: "${x.q}" and you answered: ${x.a.slice(0, 600)}`).join('\n');
+    runSample(`${tutorIntro()}\n\n${qText(q)}\n${prior ? '\n' + prior + '\n' : ''}\nTask: ${task}`, out, text => {
+      stop.hidden = true; (U.ai[q.n] = U.ai[q.n] || []).push({ q: label, a: text, at: Date.now() }); if (U.ai[q.n].length > 6) U.ai[q.n].shift(); dirty('ai');
+      const b = el.querySelector('[data-act="ai"]'); if (b) { b.classList.add('has'); b.lastChild.textContent = T().ai + ' · ' + U.ai[q.n].length }
+    }).then(() => { stop.hidden = true });
+  }
+  function struggled() { return BANK.filter(q => (U.wrong[q.n] || 0) > 0).sort((a, b) => ((U.wrong[b.n] || 0) - (U.right[b.n] || 0)) - ((U.wrong[a.n] || 0) - (U.right[a.n] || 0)) || (U.wrong[b.n] || 0) - (U.wrong[a.n] || 0)) }
+  function digest() {
+    const qs = struggled().slice(0, 25);
+    const byT = {}; BANK.forEach(q => { const r = byT[q.t] || (byT[q.t] = [0, 0]); r[0] += U.right[q.n] || 0; r[1] += U.wrong[q.n] || 0 });
+    const topicLines = Object.entries(byT).filter(([, v]) => v[0] + v[1] >= 5).map(([t, v]) => `- ${t}: ${Math.round(v[0] / (v[0] + v[1]) * 100)}% correct (${v[0] + v[1]} answers)`).join('\n');
+    const noted = Object.keys(U.notes).filter(n => byN.has(+n) && !qs.some(q => q.n === +n)).slice(0, 10).map(n => `#${n} (${byN.get(+n).t}): ${byN.get(+n).q}\n  Note: ${U.notes[n]}`).join('\n');
+    const tests = U.history.slice(-5).map(h => `${fmtDate(h.at)}: ${h.score}% of ${h.n} (${h.f})`).join('; ');
+    return `${tutorIntro()}\n\nBelow is a digest of where this student struggles most, taken from their practice app.\n\nAccuracy by topic:\n${topicLines || '(not enough answers yet)'}\n\nRecent tests: ${tests || 'none'}\n\nThe ${qs.length} questions missed most often (✗ = wrong count, ✓ = right count):\n\n` +
+      qs.map(q => `#${q.n} [${q.t}] ✗${U.wrong[q.n] || 0} ✓${U.right[q.n] || 0}\n${q.q}\n` + q.opts.map((o, i) => `  ${LET[i]}) ${o}${i === q.ans ? '  [CORRECT]' : ''}`).join('\n') + (U.notes[q.n] ? `\n  Student's note: ${U.notes[q.n]}` : '') + ((U.ai[q.n] || []).length ? `\n  Asked the AI before: ${U.ai[q.n].map(x => x.q).join('; ')}` : '')).join('\n\n') +
+      (noted ? `\n\nOther questions the student annotated:\n${noted}` : '') +
+      `\n\nTask: 1) Find the patterns: which concepts or question types keep causing mistakes, grouped by theme. 2) For the three most important themes, explain the underlying concept clearly, in a way that resolves the specific confusions above. 3) Point out any wrong answers that suggest a dangerous misconception. 4) End with a short, prioritised study plan. Keep it tight and practical.`;
+  }
+  async function copyText(text, btn) {
+    const old = btn.textContent;
+    try { await navigator.clipboard.writeText(text); btn.textContent = T().copied; setTimeout(() => { btn.textContent = old }, 1500) }
+    catch (e) { const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'margin-top:10px;min-height:160px'; btn.parentElement.appendChild(ta); ta.select() }
+  }
+  function renderAiChat(pg) {
+    const chat = U.aiChat; const n = struggled().length;
+    pg.innerHTML = `<div class="stack">
+      <div class="row"><button class="btn sm" type="button" id="back">${T().backMist}</button><h2 style="margin:0;flex:1">${T().aiDiscuss}</h2>${chat ? `<button class="btn sm" type="button" id="newc">${T().aiNew}</button>` : ''}</div>
+      <div class="chat" id="chat">${chat ? chat.msgs.map((m, i) => i === 0 ? `<details class="msg sys"><summary>${T().digestOf(chat.n)}</summary><div class="aiout" style="text-align:left">${esc(m.content)}</div></details>` : m.role === 'user' ? `<div class="msg me">${esc(m.content)}</div>` : `<div class="msg ai md">${md(m.content)}</div>`).join('') : `<p class="hint">${T().aiDiscussHint}</p>`}<div class="msg ai md" id="live" hidden></div></div>
+      ${chat ? `<div class="composer"><textarea id="ctext" placeholder="${T().aiPh}"></textarea><button class="btn primary" type="button" id="csend">${T().send}</button><button class="btn" type="button" id="cstop" hidden>${T().stop}</button></div>`
+        : `<div class="row"><button class="btn primary wide" type="button" id="cstart" ${n ? '' : 'disabled'}>${T().aiStart}</button>${n ? '' : `<p class="hint">${T().aiNoData}</p>`}</div>`}</div>`;
+    $('back').onclick = () => go('mist');
+    const live = $('live');
+    const run = () => {
+      const c = U.aiChat; live.hidden = false; const stop = $('cstop'); if (stop) stop.hidden = false;
+      runSample(c.msgs.map(m => ({ role: m.role, content: m.content })), live, text => { c.msgs.push({ role: 'assistant', content: text }); if (c.msgs.length > 40) c.msgs.splice(1, 2); dirty('ai'); renderAiChat(pg); window.scrollTo({ top: document.body.scrollHeight }) }).then(() => { if ($('cstop')) $('cstop').hidden = true });
+    };
+    if ($('cstart')) $('cstart').onclick = () => { U.aiChat = { n: Math.min(25, n), at: Date.now(), msgs: [{ role: 'user', content: digest() }] }; dirty('ai'); renderAiChat(pg) };
+    if ($('newc')) $('newc').onclick = () => { if (aiBusy) aiBusy.abort(); U.aiChat = null; dirty('ai'); renderAiChat(pg) };
+    if ($('csend')) { $('csend').onclick = () => { const t = $('ctext').value.trim(); if (!t || aiBusy) return; U.aiChat.msgs.push({ role: 'user', content: t }); dirty('ai'); renderAiChat(pg) }; $('cstop').onclick = () => { if (aiBusy) aiBusy.abort() } }
+    if (chat && chat.msgs.length && chat.msgs[chat.msgs.length - 1].role === 'user' && !aiBusy) run();
+    window.scrollTo({ top: document.body.scrollHeight });
+  }
+
+  /* ---------- READ ---------- */
+  const hideIcon = on => on ? '<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a10 10 0 0 0 4.4-1"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const shuffleIcon = '<svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>';
+  // the pinned search row sits right under the sticky header; measure the header so the row never hides behind it
+  function pinSticky() {
+    const st = $('sticky'); if (!st) return;
+    st.style.top = document.querySelector('.top').getBoundingClientRect().bottom + 'px';
+  }
+  window.addEventListener('scroll', () => { const st = $('sticky'); if (st) st.classList.toggle('stuck', window.scrollY > 40) }, { passive: true });
+  window.addEventListener('resize', pinSticky);
   function renderRead(pg) {
     const items = pool();
+    const canSave = !!(search.trim() && items.length);
     pg.innerHTML = `<div class="stack">
-      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="s" type="search" placeholder="ძიება ან კითხვის ნომერი" value="${esc(search)}" autocomplete="off">${search ? '<button type="button" id="sx" aria-label="გასუფთავება">✕</button>' : ''}</div>
-      <div class="row" style="justify-content:space-between"><label class="sw"><input type="checkbox" id="hide" ${P().hide ? 'checked' : ''}> პასუხების დამალვა</label><button class="btn" type="button" id="shuf">${order ? 'თანმიმდევრობით' : 'არევა'}</button></div>
-      <p class="hint">${items.length} კითხვა${search ? ' ნაპოვნია' : ''}</p>
+      <div class="sticky" id="sticky"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="s" type="search" placeholder="${T().searchPh}" value="${esc(search)}" autocomplete="off">${search ? `<span class="cnt">${items.length}</span><button type="button" id="sx" aria-label="${T().clear}">✕</button>` : ''}</div>
+        <button class="ib save" type="button" id="saveG" title="${T().saveSearch}" aria-label="${T().saveSearch}" ${canSave ? '' : 'disabled'}><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg></button></div>
+      <div class="seg sm" id="scope">${['all', 'q', 'a'].map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${P().scope === v}">${T().scope[i]}</button>`).join('')}</div>
+      <div class="row" style="flex-wrap:nowrap"><button class="tg hide" type="button" id="hide" aria-pressed="${P().hide}">${hideIcon(P().hide)}${T().hideAnswers}</button><button class="tg" type="button" id="shuf" aria-pressed="${!!order}">${shuffleIcon}${order ? T().inOrder : T().shuffle}</button></div>
+      <div id="saveBox"></div>
       <div class="stack" id="list"></div><div id="more"></div></div>`;
     const list = $('list');
-    if (!items.length) list.innerHTML = '<p class="empty">კითხვა ვერ მოიძებნა.</p>';
+    if (!items.length) list.innerHTML = `<p class="empty">${T().notFound}</p>`;
     items.slice(0, shown).forEach(q => list.appendChild(qCard(q, { mode: P().hide ? 'hidden' : 'read' })));
-    if (items.length > shown) { $('more').innerHTML = `<button class="btn wide" type="button" id="moreBtn">კიდევ ${Math.min(PAGE, items.length - shown)} (დარჩა ${items.length - shown})</button>`; $('moreBtn').onclick = () => { shown += PAGE; renderRead(pg); window.scrollTo({ top: document.body.scrollHeight - window.innerHeight - 400 }) } }
-    const s = $('s'); s.oninput = () => { search = s.value; shown = PAGE; const pos = s.selectionStart; renderRead(pg); const s2 = $('s'); s2.focus(); s2.setSelectionRange(pos, pos) };
+    attachMore(list, $('more'), items, () => ({ mode: P().hide ? 'hidden' : 'read' }));
+    pinSticky();
+    const s = $('s'); s.oninput = () => { search = s.value; clearTimeout(searchT); searchT = setTimeout(() => { shown = PAGE; const pos = s.selectionStart; renderRead(pg); const s2 = $('s'); s2.focus(); s2.setSelectionRange(pos, pos) }, 120) };
     if ($('sx')) $('sx').onclick = () => { search = ''; shown = PAGE; renderRead(pg) };
-    $('hide').onchange = e => { P().hide = e.target.checked; dirty('prefs'); revealed.clear(); picks.clear(); renderRead(pg) };
+    $('scope').onclick = e => { const b = e.target.closest('button'); if (!b) return; P().scope = b.dataset.v; dirty('prefs'); shown = PAGE; renderRead(pg) };
+    $('hide').onclick = () => { P().hide = !P().hide; dirty('prefs'); revealed.clear(); picks.clear(); renderRead(pg) };
     $('shuf').onclick = () => { order = order ? null : shuffle(BANK.map(q => q.n)); shown = PAGE; renderRead(pg) };
+    if (canSave) $('saveG').onclick = () => {
+      const where = P().scope === 'q' ? T().whereQ : P().scope === 'a' ? T().whereA : T().whereAll;
+      $('saveBox').innerHTML = `<div class="card"><h2>${T().groupFromSearch}</h2><p class="hint" style="margin-bottom:8px">${esc(T().groupFromSearchHint(where, search.trim(), BANK.filter(q => matchWords(q, search, P().scope)).length))}</p>
+        <div class="row"><input class="txt" type="text" id="gname" value="${esc(search.trim())}" style="flex:1;min-width:0"><button class="btn primary" type="button" id="gok">${T().create}</button><button class="btn" type="button" id="gno">${T().no}</button></div></div>`;
+      $('gok').onclick = () => { const g = createGroup($('gname').value, search, P().scope); curGroup = g.id; toast(T().toastGroup(g.name)); go('groups') }; $('gno').onclick = () => { $('saveBox').innerHTML = '' }; $('gname').focus();
+    };
+  }
+
+  /* ---------- GROUPS ---------- */
+  function groupRow(x) { return `<button type="button" class="grp" data-g="${x.id}">${groupIcon}<span class="nm">${esc(x.name)}${x.q ? '<br><small style="color:var(--muted);font-weight:400">' + T().search + ': ' + esc(x.q) + '</small>' : ''}</span><span class="ct">${groupMembers(x).length}</span></button>` }
+  function renderGroups(pg) {
+    const g = curGroup && groupById(curGroup);
+    if (g) return renderGroup(pg, g);
+    pg.innerHTML = `<div class="stack">
+      <div class="card"><h2>${T().newGroup}</h2><div class="row"><input class="txt" type="text" id="gname" placeholder="${T().groupNamePh}" style="flex:1;min-width:0"><button class="btn primary" type="button" id="gadd">${T().create}</button></div>
+        <p class="hint" style="margin-top:8px">${T().groupsHint}</p></div>
+      <div class="glist stack" id="gl">${U.groups.length ? U.groups.map(groupRow).join('') : `<p class="empty">${T().noGroups}</p>`}</div></div>`;
+    $('gadd').onclick = () => { const n = $('gname').value.trim(); if (!n) return $('gname').focus(); const g2 = createGroup(n, '', 'all'); curGroup = g2.id; toast(T().toastGroup(g2.name)); render() };
+    $('gname').onkeydown = e => { if (e.key === 'Enter') $('gadd').click() };
+    $('gl').onclick = e => { const b = e.target.closest('button.grp'); if (b) { curGroup = b.dataset.g; groupEdit = false; render(); window.scrollTo({ top: 0 }) } };
+  }
+  function renderGroup(pg, g) {
+    const items = groupMembers(g);
+    pg.innerHTML = `<div class="stack">
+      <div class="row"><button class="btn sm" type="button" id="back">${T().backGroups}</button><h2 style="margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(g.name)}</h2><button class="btn sm" type="button" id="edit">${groupEdit ? T().close : T().edit}</button></div>
+      ${groupEdit ? `<div class="card"><div class="stack">
+        <label>${T().name}<input class="txt" type="text" id="en" value="${esc(g.name)}"></label>
+        <label>${T().autoSearch}<input class="txt" type="text" id="eq" value="${esc(g.q || '')}" placeholder="${T().emptyManual}"></label>
+        <div class="seg sm" id="es">${['all', 'q', 'a'].map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${(g.scope || 'all') === v}">${T().scope[i]}</button>`).join('')}</div>
+        <div class="row"><button class="btn primary" type="button" id="esave" style="flex:1">${T().save}</button><button class="btn danger" type="button" id="edel">${T().deleteGroup}</button></div><div id="dbox"></div></div></div>` : ''}
+      <div class="row" style="flex-wrap:nowrap"><button class="btn primary" type="button" id="gt" style="flex:1.6" ${items.length ? '' : 'disabled'}>${T().testGroup} · ${items.length}</button><button class="tg" type="button" id="hide" aria-pressed="${P().hide}" style="flex:1">${hideIcon(P().hide)}${T().hide}</button></div>
+      <p class="hint">${T().manual(g.ids.length)}${g.q ? ' · ' + esc(T().bySearch(BANK.filter(q => matchWords(q, g.q, g.scope || 'all')).length, g.q)) : ''}</p>
+      <div class="stack" id="list">${items.length ? '' : `<p class="empty">${T().groupEmpty}</p>`}</div><div id="more"></div></div>`;
+    const list = $('list'); items.slice(0, shown).forEach(q => list.appendChild(qCard(q, { mode: P().hide ? 'hidden' : 'read', group: g, onChange: () => render() })));
+    attachMore(list, $('more'), items, () => ({ mode: P().hide ? 'hidden' : 'read', group: g, onChange: () => render() }));
+    $('back').onclick = () => { curGroup = null; shown = PAGE; render() };
+    $('edit').onclick = () => { groupEdit = !groupEdit; render() };
+    $('hide').onclick = () => { P().hide = !P().hide; dirty('prefs'); revealed.clear(); picks.clear(); render() };
+    $('gt').onclick = () => { const keep = P().count; P().count = 'all'; startTest(items, g.name); P().count = keep };
+    if (groupEdit) {
+      let scope = g.scope || 'all';
+      $('es').onclick = e => { const b = e.target.closest('button'); if (!b) return; scope = b.dataset.v; $('es').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === scope)) };
+      $('esave').onclick = () => { g.name = $('en').value.trim() || g.name; g.q = $('eq').value.trim(); g.scope = scope; dirty('groups'); groupEdit = false; render() };
+      $('edel').onclick = () => { $('dbox').innerHTML = `<div class="confirm">${esc(T().deleteGroupQ(g.name))} <button class="btn sm danger" type="button" id="yes">${T().del}</button><button class="btn sm" type="button" id="no">${T().no}</button></div>`;
+        $('yes').onclick = () => { U.groups = U.groups.filter(x => x.id !== g.id); dirty('groups'); curGroup = null; groupEdit = false; render() }; $('no').onclick = () => { $('dbox').innerHTML = '' } };
+    }
   }
 
   /* ---------- TEST ---------- */
@@ -282,42 +670,44 @@ select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
     const p = BANK.filter(inFilter);
     const counts = [10, 20, 30, 50, 100].filter(n => n < p.length);
     pg.innerHTML = `<div class="stack">
-      <div class="card"><h2>ახალი ტესტი</h2><p class="hint" style="margin-bottom:10px">${esc(filterLabel())} · ${p.length} კითხვა ფილტრში</p>
+      <div class="card"><h2>${T().newTest}</h2><p class="hint" style="margin-bottom:10px">${esc(filterLabel())} · ${T().inFilter(p.length)}</p>
         <div class="stack">
-          <div><p class="hint" style="margin-bottom:6px">რამდენი კითხვა</p><div class="seg" id="cnt">${counts.map(n => `<button type="button" data-v="${n}" aria-pressed="${P().count === n}">${n}</button>`).join('')}<button type="button" data-v="all" aria-pressed="${P().count === 'all'}">ყველა</button></div></div>
-          <div><p class="hint" style="margin-bottom:6px">შემოწმება</p><div class="seg" id="chk"><button type="button" data-v="now" aria-pressed="${P().check === 'now'}">ყოველ პასუხზე</button><button type="button" data-v="end" aria-pressed="${P().check === 'end'}">ბოლოს, როგორც გამოცდაზე</button></div></div>
-          <label class="sw"><input type="checkbox" id="shf" ${P().shuffle ? 'checked' : ''}> შემთხვევითი თანმიმდევრობა</label>
-          <button class="btn primary wide" type="button" id="go" ${p.length ? '' : 'disabled'}>დაწყება</button>
+          <div><p class="hint" style="margin-bottom:6px">${T().howMany}</p><div class="seg" id="cnt">${counts.map(n => `<button type="button" data-v="${n}" aria-pressed="${P().count === n}">${n}</button>`).join('')}<button type="button" data-v="all" aria-pressed="${P().count === 'all'}">${T().all}</button></div></div>
+          <div><p class="hint" style="margin-bottom:6px">${T().checking}</p><div class="seg" id="chk"><button type="button" data-v="now" aria-pressed="${P().check === 'now'}">${T().checkNow}</button><button type="button" data-v="end" aria-pressed="${P().check === 'end'}">${T().checkEnd}</button></div></div>
+          <label class="sw"><input type="checkbox" id="shf" ${P().shuffle ? 'checked' : ''}> ${T().random}</label>
+          <button class="btn primary wide" type="button" id="go" ${p.length ? '' : 'disabled'}>${T().start}</button>
         </div></div>
-      ${U.history.length ? `<div class="card"><h2>ბოლო ტესტები</h2>${U.history.slice(-6).reverse().map(h => `<div class="mist" style="padding:8px 0;border-top:1px solid var(--line)"><span><b style="color:${h.score >= 70 ? 'var(--good)' : 'var(--bad)'}">${h.score}%</b> · ${h.n} კითხვა</span><span class="hint">${new Date(h.at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'short' })} · ${esc(h.f)}</span></div>`).join('')}</div>` : ''}</div>`;
+      ${U.groups.length ? `<div class="card"><h2>${T().testOnGroup}</h2><div class="glist stack" id="gl">${U.groups.map(groupRow).join('')}</div></div>` : ''}
+      ${U.history.length ? `<div class="card"><h2>${T().recent}</h2>${U.history.slice(-6).reverse().map(h => `<div class="mist" style="padding:8px 0;border-top:1px solid var(--line)"><span><b style="color:${h.score >= 70 ? 'var(--good)' : 'var(--bad)'}">${h.score}%</b> · ${T().q(h.n)}</span><span class="hint">${fmtDate(h.at)} · ${esc(h.f)}</span></div>`).join('')}</div>` : ''}</div>`;
     $('cnt').onclick = e => { const b = e.target.closest('button'); if (!b) return; P().count = b.dataset.v === 'all' ? 'all' : +b.dataset.v; dirty('prefs'); renderTest(pg) };
     $('chk').onclick = e => { const b = e.target.closest('button'); if (!b) return; P().check = b.dataset.v; dirty('prefs'); renderTest(pg) };
     $('shf').onchange = e => { P().shuffle = e.target.checked; dirty('prefs') };
     $('go').onclick = () => startTest(p);
+    if ($('gl')) $('gl').onclick = e => { const b = e.target.closest('button.grp'); if (!b) return; const g = groupById(b.dataset.g); const items = groupMembers(g); if (!items.length) return; const keep = P().count; P().count = 'all'; startTest(items, g.name); P().count = keep };
   }
   function startTest(p, label) {
     let ids = p.map(q => q.n); if (P().shuffle) shuffle(ids); if (P().count !== 'all') ids = ids.slice(0, P().count);
     if (!ids.length) return;
     test = { ids, picks: {}, cur: 0, done: false, check: P().check, f: label || filterLabel(), confirm: false, onlyWrong: true };
-    view = 'test'; $('nTest').click();
+    go('test');
   }
   function renderTestLive(pg) {
     const total = test.ids.length, answered = Object.keys(test.picks).length, q = byN.get(test.ids[test.cur]), picked = test.picks[q.n];
     const now = test.check === 'now';
-    pg.innerHTML = `<div class="prog"><span>კითხვა <b>${test.cur + 1}</b> / ${total}</span>${now ? `<span>სწორი <b style="color:var(--good)">${test.ids.filter(n => test.picks[n] === byN.get(n).ans).length}</b></span>` : `<span>პასუხი <b>${answered}</b></span>`}<button class="btn danger" type="button" id="abort" style="margin-left:auto;min-height:36px;padding:6px 12px">გაუქმება</button></div>
+    pg.innerHTML = `<div class="prog"><span>${T().question} <b>${test.cur + 1}</b> / ${total}</span>${now ? `<span>${T().correct} <b style="color:var(--good)">${test.ids.filter(n => test.picks[n] === byN.get(n).ans).length}</b></span>` : `<span>${T().answered} <b>${answered}</b></span>`}<button class="btn danger sm" type="button" id="abort" style="margin-left:auto">${T().cancel}</button></div>
       <div class="pbar"><i style="width:${answered / total * 100}%"></i></div><div id="qbox"></div>
-      <div class="row sticky-next" id="nav"></div>${test.confirm ? `<div class="confirm" style="margin-top:12px"><span>${total - answered ? (total - answered) + ' კითხვა უპასუხოა და არასწორად ჩაითვლება. ' : ''}დავასრულოთ?</span><button class="btn primary" type="button" id="yes">დიახ</button><button class="btn" type="button" id="no">არა</button></div>` : ''}
+      <div class="row sticky-next" id="nav"></div>${test.confirm ? `<div class="confirm" style="margin-top:12px"><span>${T().finishQ(total - answered)}</span><button class="btn primary" type="button" id="yes">${T().yes}</button><button class="btn" type="button" id="no">${T().no}</button></div>` : ''}
       ${!now ? `<div class="grid" style="margin-top:14px" id="grid">${test.ids.map((n, i) => `<button type="button" data-i="${i}" class="${test.picks[n] !== undefined ? 'done' : ''}${i === test.cur ? ' cur' : ''}">${i + 1}</button>`).join('')}</div>` : ''}`;
     $('qbox').appendChild(qCard(q, { mode: now ? 'testNow' : 'testEnd', picked, onPick: i => {
       test.picks[q.n] = i;
-      if (now) { const ok = i === q.ans; const s = ok ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers') }
+      if (now) { const ok = i === q.ans; const s = ok ? U.right : U.wrong; s[q.n] = (s[q.n] || 0) + 1; dirty('answers'); justAnswered.add(q.n) }
       if (!now && test.cur < total - 1) test.cur++;
       renderTestLive(pg); if (!now) window.scrollTo({ top: 0 });
     } }));
     const last = test.cur === total - 1;
     $('nav').innerHTML = now
-      ? (picked !== undefined ? `<button class="btn primary wide" type="button" id="next">${last ? 'შედეგი' : 'შემდეგი'}</button>` : '')
-      : `<button class="btn" type="button" id="prev" ${test.cur === 0 ? 'disabled' : ''} style="flex:1">← წინა</button>${last ? `<button class="btn primary" type="button" id="fin" style="flex:2">დასრულება</button>` : `<button class="btn" type="button" id="next" style="flex:1">შემდეგი →</button><button class="btn primary" type="button" id="fin">დასრულება</button>`}`;
+      ? (picked !== undefined ? `<button class="btn primary wide" type="button" id="next">${last ? T().result : T().next}</button>` : '')
+      : `<button class="btn" type="button" id="prev" ${test.cur === 0 ? 'disabled' : ''} style="flex:1">${T().prev}</button>${last ? `<button class="btn primary" type="button" id="fin" style="flex:2">${T().finish}</button>` : `<button class="btn" type="button" id="next" style="flex:1">${T().next} →</button><button class="btn primary" type="button" id="fin">${T().finish}</button>`}`;
     if ($('next')) $('next').onclick = () => { if (now && last) return finishTest(); test.cur++; renderTestLive(pg); window.scrollTo({ top: 0 }) };
     if ($('prev')) $('prev').onclick = () => { test.cur--; renderTestLive(pg); window.scrollTo({ top: 0 }) };
     if ($('fin')) $('fin').onclick = () => { test.confirm = true; renderTestLive(pg) };
@@ -337,30 +727,45 @@ select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
     const qs = test.ids.map(n => byN.get(n)); const wrong = qs.filter(q => test.picks[q.n] !== q.ans);
     const r = 48, C = 2 * Math.PI * r;
     pg.innerHTML = `<div class="stack"><div class="card">
-      <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="შედეგი ${test.score}%"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${test.score >= 70 ? 'var(--good)' : 'var(--bad)'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * test.score / 100} ${C}" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" font-size="26" font-weight="700">${test.score}%</text></svg>
-      <div class="tiles" style="margin-top:12px"><div class="tile">სწორი<b class="g">${qs.length - wrong.length}</b></div><div class="tile">არასწორი<b class="r">${wrong.length}</b></div><div class="tile">სულ<b>${qs.length}</b></div></div>
-      <div class="row" style="margin-top:12px">${wrong.length ? `<button class="btn primary" type="button" id="retry" style="flex:1">შეცდომების გამეორება</button>` : ''}<button class="btn" type="button" id="newt" style="flex:1">ახალი ტესტი</button></div></div>
-      <div class="row" style="justify-content:space-between"><h2 style="margin:0">გადახედვა</h2><button class="btn" type="button" id="tw" style="min-height:38px;padding:6px 12px">${test.onlyWrong ? 'ყველა' : 'მხოლოდ შეცდომები'}</button></div>
+      <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="${T().result} ${test.score}%"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle class="arc" id="arc" cx="60" cy="60" r="${r}" fill="none" stroke="${test.score >= 70 ? 'var(--good)' : 'var(--bad)'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C} ${C}" stroke-dashoffset="${test.counted ? C * (1 - test.score / 100) : C}" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" font-size="26" font-weight="700" id="pct">${test.counted ? test.score : 0}%</text></svg>
+      <div class="tiles" style="margin-top:12px"><div class="tile">${T().correct}<b class="g" data-count="${qs.length - wrong.length}">${test.counted ? qs.length - wrong.length : 0}</b></div><div class="tile">${T().wrong}<b class="r" data-count="${wrong.length}">${test.counted ? wrong.length : 0}</b></div><div class="tile">${T().total}<b data-count="${qs.length}">${test.counted ? qs.length : 0}</b></div></div>
+      <div class="row" style="margin-top:12px">${wrong.length ? `<button class="btn primary" type="button" id="retry" style="flex:1">${T().repeatWrong}</button><button class="btn" type="button" id="wg">${T().wrongToGroup}</button>` : ''}<button class="btn" type="button" id="newt" style="flex:1">${T().newTest}</button></div><div id="wgbox"></div></div>
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">${T().review}</h2><button class="btn sm" type="button" id="tw">${test.onlyWrong ? T().all : T().onlyWrong}</button></div>
       <div class="stack" id="rev"></div></div>`;
+    if (!test.counted) {   // once per test: the ring sweeps to the score and the numbers count up with it
+      test.counted = true; const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, dur = reduced ? 0 : 700, t0 = performance.now();
+      requestAnimationFrame(() => { const a = $('arc'); if (a) a.style.strokeDashoffset = C * (1 - test.score / 100) });
+      const counts = [...pg.querySelectorAll('[data-count]')], pct = $('pct');
+      const step = now => { const k = dur ? Math.min(1, (now - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3); if (pct) pct.textContent = Math.round(test.score * e) + '%'; counts.forEach(c => c.textContent = Math.round(+c.dataset.count * e)); if (k < 1 && pct && pct.isConnected) requestAnimationFrame(step) };
+      requestAnimationFrame(step);
+    }
     const rev = $('rev'); const list = qs.filter(q => !test.onlyWrong || test.picks[q.n] !== q.ans);
-    if (!list.length) rev.innerHTML = '<p class="empty">შეცდომა არ არის.</p>';
+    if (!list.length) rev.innerHTML = `<p class="empty">${T().noWrong}</p>`;
     list.forEach(q => rev.appendChild(qCard(q, { mode: 'review', picked: test.picks[q.n] })));
     $('tw').onclick = () => { test.onlyWrong = !test.onlyWrong; renderTestResult(pg) };
     $('newt').onclick = () => { test = null; render() };
-    if ($('retry')) $('retry').onclick = () => { const keep = P().count; P().count = 'all'; startTest(wrong, 'შეცდომები'); P().count = keep };
+    if ($('retry')) $('retry').onclick = () => { const keep = P().count; P().count = 'all'; startTest(wrong, T().mistakes); P().count = keep };
+    if ($('wg')) $('wg').onclick = () => { $('wgbox').innerHTML = `<div class="panel"><div class="row"><input class="txt" type="text" id="wgn" value="${T().mistakes} · ${fmtDate(Date.now())}" style="flex:1;min-width:0"><button class="btn sm primary" type="button" id="wgok">${T().create}</button></div></div>`;
+      $('wgok').onclick = () => { const g = createGroup($('wgn').value, '', 'all'); g.ids = wrong.map(q => q.n); dirty('groups'); toast(T().toastGroup(g.name)); $('wgbox').innerHTML = `<p class="hint" style="margin-top:8px">${esc(T().groupCreated(g.name, g.ids.length))}</p>` } };
   }
 
   /* ---------- MISTAKES ---------- */
   function mistakes() { return BANK.filter(q => (U.wrong[q.n] || 0) > 0).sort((a, b) => (U.wrong[b.n] - (U.right[b.n] || 0)) - (U.wrong[a.n] - (U.right[a.n] || 0))) }
   function renderMist(pg) {
-    const all = mistakes(); const items = all.filter(inFilter);
-    pg.innerHTML = `<div class="stack"><p class="hint">კითხვები, რომლებზეც ოდესმე შეცდით. ✓ და ✗ სწორი და არასწორი პასუხების რაოდენობაა. სია იწმინდება მაშინ, როცა თქვენ წაშლით.</p>
-      ${items.length ? `<div class="row"><button class="btn primary" type="button" id="mt" style="flex:1">ტესტი შეცდომებზე · ${items.length}</button><button class="btn" type="button" id="mc">სიის გასუფთავება</button></div><div id="cbox"></div>` : ''}
-      <div class="stack" id="ml">${items.length ? '' : '<p class="empty">ჯერ შეცდომა არ არის.</p>'}</div></div>`;
+    const items = mistakes().filter(inFilter);
+    const nAll = struggled().length;
+    pg.innerHTML = `<div class="stack">
+      ${NO_AI ? '' : `<div class="card"><h2>${T().aiDiscuss}</h2><p class="hint" style="margin-bottom:10px">${sampleFn ? T().aiDiscussHint : T().aiUnavailable}</p>
+        <div class="row">${sampleFn ? `<button class="btn primary" type="button" id="aid" style="flex:1" ${nAll ? '' : 'disabled'}>${U.aiChat ? T().aiContinue : T().aiStart}</button>` : ''}<button class="btn" type="button" id="cpd" ${nAll ? '' : 'disabled'}>${T().copyDigest}</button></div></div>`}
+      <p class="hint">${T().mistHint}</p>
+      ${items.length ? `<div class="row"><button class="btn primary" type="button" id="mt" style="flex:1">${T().testMist} · ${items.length}</button><button class="btn" type="button" id="mc">${T().clearList}</button></div><div id="cbox"></div>` : ''}
+      <div class="stack" id="ml">${items.length ? '' : `<p class="empty">${T().noMist}</p>`}</div></div>`;
     const ml = $('ml'); items.slice(0, 50).forEach(q => ml.appendChild(qCard(q, { mode: P().hide ? 'hidden' : 'read' })));
-    if (items.length > 50) ml.insertAdjacentHTML('beforeend', `<p class="hint">ნაჩვენებია 50 / ${items.length}. ტესტი ყველას მოიცავს.</p>`);
-    if ($('mt')) $('mt').onclick = () => { const keep = P().count; P().count = 'all'; startTest(items, 'შეცდომები'); P().count = keep };
-    if ($('mc')) $('mc').onclick = () => { $('cbox').innerHTML = `<div class="confirm">წაიშლება შეცდომების ისტორია ამ ფილტრში (${items.length}). <button class="btn danger" type="button" id="yes">წაშლა</button><button class="btn" type="button" id="no">არა</button></div>`; $('yes').onclick = () => { items.forEach(q => { delete U.wrong[q.n] }); dirty('answers'); render() }; $('no').onclick = () => { $('cbox').innerHTML = '' } };
+    if (items.length > 50) ml.insertAdjacentHTML('beforeend', `<p class="hint">${T().showing50(items.length)}</p>`);
+    if ($('aid')) $('aid').onclick = () => go('ai');
+    if ($('cpd')) $('cpd').onclick = e => copyText(digest(), e.currentTarget);
+    if ($('mt')) $('mt').onclick = () => { const keep = P().count; P().count = 'all'; startTest(items, T().mistakes); P().count = keep };
+    if ($('mc')) $('mc').onclick = () => { $('cbox').innerHTML = `<div class="confirm">${T().clearMistQ(items.length)} <button class="btn danger" type="button" id="yes">${T().del}</button><button class="btn" type="button" id="no">${T().no}</button></div>`; $('yes').onclick = () => { items.forEach(q => { delete U.wrong[q.n] }); dirty('answers'); render() }; $('no').onclick = () => { $('cbox').innerHTML = '' } };
   }
 
   /* ---------- STATS ---------- */
@@ -369,16 +774,19 @@ select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
     const tot = Object.values(U.right).reduce((a, b) => a + b, 0), totW = Object.values(U.wrong).reduce((a, b) => a + b, 0);
     const byT = {}; BANK.forEach(q => { const r = byT[q.t] || (byT[q.t] = { n: 0, seen: 0, ok: 0, w: 0 }); r.n++; const rr = U.right[q.n] || 0, ww = U.wrong[q.n] || 0; if (rr || ww) r.seen++; r.ok += rr; r.w += ww });
     const rows = Object.entries(byT).sort((a, b) => b[1].n - a[1].n);
+    const notes = Object.keys(U.notes).filter(n => byN.has(+n));
     pg.innerHTML = `<div class="stack">
-      <div class="tiles"><div class="tile">ნანახი<b>${seen.length}</b>${BANK.length}-დან</div><div class="tile">ბოლოს სწორი<b class="g">${okN}</b></div><div class="tile">სულ პასუხი<b>${tot + totW}</b>სიზუსტე ${tot + totW ? Math.round(tot / (tot + totW) * 100) : 0}%</div><div class="tile">ტესტი<b>${U.history.length}</b>${U.history.length ? 'საუკეთესო ' + Math.max(...U.history.map(h => h.score)) + '%' : ''}</div></div>
-      <div class="card"><h2>თემების მიხედვით</h2>${rows.map(([t, r]) => `<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="mist"><span style="font-size:.92rem">${esc(t)}</span><span class="hint">${r.seen}/${r.n} ნანახი${r.ok + r.w ? ' · ' + Math.round(r.ok / (r.ok + r.w) * 100) + '%' : ''}</span></div><div class="pbar" style="margin:6px 0 0"><i style="width:${r.seen / r.n * 100}%;background:${r.ok + r.w && r.ok / (r.ok + r.w) < .7 ? 'var(--bad)' : 'var(--accent)'}"></i></div></div>`).join('')}</div>
-      <div class="card"><h2>მონაცემები</h2><p class="hint" style="margin-bottom:10px">${store.mode === 'cloud' ? 'პროგრესი ინახება თქვენს ანგარიშზე და ჩანს ყველა მოწყობილობაზე.' : 'პროგრესი ინახება მხოლოდ ამ ბრაუზერში.'}</p><button class="btn danger" type="button" id="reset">მთელი პროგრესის წაშლა</button><div id="rbox"></div></div></div>`;
-    $('reset').onclick = () => { $('rbox').innerHTML = `<div class="confirm" style="margin-top:10px">წაიშლება ყველა პასუხი და ტესტი. დარწმუნებული ხართ? <button class="btn danger" type="button" id="yes">დიახ</button><button class="btn" type="button" id="no">არა</button></div>`; $('yes').onclick = () => { U.wrong = {}; U.right = {}; U.history = []; DOCS.forEach(dirty); flush(); render() }; $('no').onclick = () => { $('rbox').innerHTML = '' } };
+      <div class="tiles"><div class="tile">${T().seen}<b>${seen.length}</b>${T().of(BANK.length)}</div><div class="tile">${T().lastCorrect}<b class="g">${okN}</b></div><div class="tile">${T().totalAnswers}<b>${tot + totW}</b>${T().accuracy(tot + totW ? Math.round(tot / (tot + totW) * 100) : 0)}</div><div class="tile">${T().tests}<b>${U.history.length}</b>${U.history.length ? T().best(Math.max(...U.history.map(h => h.score))) : ''}</div><div class="tile">${T().notes}<b>${notes.length}</b></div><div class="tile">${T().groups}<b>${U.groups.length}</b></div></div>
+      ${notes.length ? `<div class="card"><h2>${T().withNotes}</h2><div class="stack" id="nl"></div></div>` : ''}
+      <div class="card"><h2>${T().byTopic}</h2>${rows.map(([t, r]) => `<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="mist"><span style="font-size:.92rem">${esc(t)}</span><span class="hint">${T().seenOf(r.seen, r.n)}${r.ok + r.w ? ' · ' + Math.round(r.ok / (r.ok + r.w) * 100) + '%' : ''}</span></div><div class="pbar" style="margin:6px 0 0"><i style="width:${r.seen / r.n * 100}%;background:${r.ok + r.w && r.ok / (r.ok + r.w) < .7 ? 'var(--bad)' : 'var(--accent)'}"></i></div></div>`).join('')}</div>
+      <div class="card"><h2>${T().data}</h2><p class="hint" style="margin-bottom:10px">${store.mode === 'cloud' ? T().dataCloud : T().dataLocal}</p><button class="btn danger" type="button" id="reset">${T().resetAnswers}</button><div id="rbox"></div></div></div>`;
+    if ($('nl')) notes.slice(0, 50).map(n => byN.get(+n)).forEach(q => $('nl').appendChild(qCard(q, { mode: 'read' })));
+    $('reset').onclick = () => { $('rbox').innerHTML = `<div class="confirm" style="margin-top:10px">${T().resetQ} <button class="btn danger" type="button" id="yes">${T().yes}</button><button class="btn" type="button" id="no">${T().no}</button></div>`; $('yes').onclick = () => { U.wrong = {}; U.right = {}; U.history = []; dirty('answers'); dirty('history'); flush(); render() }; $('no').onclick = () => { $('rbox').innerHTML = '' } };
   }
 
   /* ---------- keyboard (desktop) ---------- */
   document.addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || !test || test.done || view !== 'test') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || !test || test.done || view !== 'test') return;
     const q = byN.get(test.ids[test.cur]); const k = parseInt(e.key, 10);
     if (k >= 1 && k <= q.opts.length) { const b = document.querySelector(`#qbox .opt[data-i="${k - 1}"]`); if (b && b.tagName === 'BUTTON') b.click() }
     else if (e.key === 'Enter' || e.key === 'ArrowRight') { const n = $('next'); if (n) n.click() }
@@ -389,8 +797,9 @@ select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
   fetch('bank.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json() }).then(async data => {
     BANK = data; BANK.forEach(q => byN.set(q.n, q));
     const tc = {}; BANK.forEach(q => tc[q.t] = (tc[q.t] || 0) + 1); topics = Object.keys(tc).sort((a, b) => tc[b] - tc[a]);
-    await initStore(); render();
-  }).catch(err => { $('page').innerHTML = '<p class="empty">კითხვების ჩატვირთვა ვერ მოხერხდა (' + esc(err.message) + '). განაახლეთ გვერდი.</p>' });
+    await Promise.all([initStore(), (window.claude && claude.use ? claude.use('sample').catch(() => null) : Promise.resolve(null)).then(s => { sampleFn = s })]);
+    render();
+  }).catch(err => { $('page').innerHTML = `<p class="empty">${T().loadErr} (${esc(err.message)}). ${T().reload}</p>` });
 })();
 </script>
 
